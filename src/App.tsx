@@ -1,42 +1,54 @@
-import React, { useState } from 'react';
-import './App.css';
-import styles from './App.module.css';
-import YouTubePlayer from './components/YouTubePlayer';
+import { useState } from "react";
+import "./App.css";
+import styles from "./App.module.css";
+import YouTubePlayer from "./components/YouTubePlayer";
 
 function App() {
-  const [youtubeUrl, setYoutubeUrl] = useState('');
-  const [videoId, setVideoId] = useState('');
+  // ① 入力中のURLを管理するstate
+  const [currentUrl, setCurrentUrl] = useState("");
+  // ② 表示する動画IDの「リスト」を管理するstate
+  const [videoIds, setVideoIds] = useState<string[]>([]);
 
-  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const url = e.target.value;
-    setYoutubeUrl(url);
+  // 動画を追加する関数
+  const handleAddVideo = () => {
+    // URLが空なら何もしない
+    if (!currentUrl) return;
 
     try {
-      const urlObject = new URL(url);
-      const id = urlObject.searchParams.get('v');
-      if (id) {
-        setVideoId(id);
+      const urlObject = new URL(currentUrl);
+      const id = urlObject.searchParams.get("v");
+
+      // IDが取得でき、かつまだリストにない場合のみ追加
+      if (id && !videoIds.includes(id)) {
+        setVideoIds([...videoIds, id]);
+        setCurrentUrl(""); // 追加に成功したら入力欄をクリア
       } else {
-        setVideoId('');
+        alert("有効なYouTubeのURLではないか、既に追加されています。");
       }
     } catch (error) {
       console.error(error);
-      setVideoId('');
+      alert("URLの形式が正しくありません。");
     }
   };
 
   return (
     <div className="App">
       <h1>YouTube Viewer</h1>
-      <input
-        className={styles.urlTextInput}
-        type="text"
-        placeholder="YouTube動画のURLを貼り付け"
-        value={youtubeUrl}
-        onChange={handleUrlChange}
-      />
+      <div className={styles.inputContainer}>
+        <input
+          className={styles.urlTextInput}
+          type="text"
+          placeholder="YouTube動画のURLを貼り付け"
+          value={currentUrl}
+          onChange={(e) => setCurrentUrl(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleAddVideo()}
+        />
+        <button onClick={handleAddVideo} className={styles.addButton}>
+          追加
+        </button>
+      </div>
 
-      <YouTubePlayer videoId={videoId} />
+      <YouTubePlayer videoIds={videoIds} />
     </div>
   );
 }

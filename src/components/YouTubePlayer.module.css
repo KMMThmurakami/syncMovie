@@ -1,3 +1,8 @@
 .playerContainer {
+    display: flex; /* 動画を横に並べる */
+    flex-wrap: wrap; /* 画面幅で折り返す */
+    gap: 16px; /* 動画間のスペース */
+    justify-content: center;
     margin-top: 20px;
 }
+
