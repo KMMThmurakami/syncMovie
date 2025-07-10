@@ -1,35 +1,44 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from 'react';
+import './App.css';
+import styles from './App.module.css';
+import YouTubePlayer from './components/YouTubePlayer';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [youtubeUrl, setYoutubeUrl] = useState('');
+  const [videoId, setVideoId] = useState('');
+
+  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const url = e.target.value;
+    setYoutubeUrl(url);
+
+    try {
+      const urlObject = new URL(url);
+      const id = urlObject.searchParams.get('v');
+      if (id) {
+        setVideoId(id);
+      } else {
+        setVideoId('');
+      }
+    } catch (error) {
+      console.error(error);
+      setVideoId('');
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="App">
+      <h1>YouTube Viewer</h1>
+      <input
+        className={styles.urlTextInput}
+        type="text"
+        placeholder="YouTube動画のURLを貼り付け"
+        value={youtubeUrl}
+        onChange={handleUrlChange}
+      />
+
+      <YouTubePlayer videoId={videoId} />
+    </div>
+  );
 }
 
-export default App
+export default App;
