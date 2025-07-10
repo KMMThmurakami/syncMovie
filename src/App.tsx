@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./App.css";
 import styles from "./App.module.css";
 import YouTubePlayer from "./components/YouTubePlayer";
+import { isValidYouTubeId } from "./utils/youtube";
 
 function App() {
   // ① 入力中のURLを管理するstate
@@ -10,7 +11,7 @@ function App() {
   const [videoIds, setVideoIds] = useState<string[]>([]);
 
   // 動画を追加する関数
-  const handleAddVideo = () => {
+  const handleAddVideo = async () => {
     // URLが空なら何もしない
     if (!currentUrl) return;
 
@@ -20,8 +21,15 @@ function App() {
 
       // IDが取得でき、かつまだリストにない場合のみ追加
       if (id && !videoIds.includes(id)) {
-        setVideoIds([...videoIds, id]);
-        setCurrentUrl(""); // 追加に成功したら入力欄をクリア
+        // videoIdをstateにセットする前に、IDが有効かチェック
+        const isValid = await isValidYouTubeId(id);
+
+        if (isValid) {
+          setVideoIds([...videoIds, id]);
+          setCurrentUrl("");
+        } else {
+          alert("存在しない、または非公開の動画IDです。");
+        }
       } else {
         alert("有効なYouTubeのURLではないか、既に追加されています。");
       }
