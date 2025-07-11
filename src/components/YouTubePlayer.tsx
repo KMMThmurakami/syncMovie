@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "./YouTubePlayer.module.css";
+import ReactPlayer from "react-player";
 
 interface YouTubePlayerProps {
   videoIds: string[];
@@ -36,6 +37,17 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
             ✕
           </div>
         </div>
+      ))}
+      {videoIds.map((id) => (
+        <ReactPlayer
+          key={id}
+          // refに、配列の各要素をセットするための関数を渡します
+          // ref={(el) => {
+          //   if (el) playerRefs.current[index] = el;
+          // }}
+          src={`http://www.youtube.com/watch?v=${id}`}
+          // ... 他のオプション
+        />
       ))}
     </div>
   );
