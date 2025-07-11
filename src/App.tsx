@@ -39,6 +39,12 @@ function App() {
     }
   };
 
+  // IDを指定して動画を削除する関数
+  const handleRemoveVideo = (idToRemove: string) => {
+    const newVideoIds = videoIds.filter((id) => id !== idToRemove);
+    setVideoIds(newVideoIds);
+  };
+
   return (
     <div className="App">
       <h1>YouTube Viewer</h1>
@@ -56,7 +62,7 @@ function App() {
         </button>
       </div>
 
-      <YouTubePlayer videoIds={videoIds} />
+      <YouTubePlayer videoIds={videoIds} onRemoveVideo={handleRemoveVideo} />
     </div>
   );
 }

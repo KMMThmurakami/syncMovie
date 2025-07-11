@@ -3,6 +3,30 @@
     flex-wrap: wrap; /* 画面幅で折り返す */
     gap: 16px; /* 動画間のスペース */
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 16px;
+    padding: 8px;
 }
 
+.playerItem {
+    display: flex;
+    gap: 8px;
+}
+
+.playerRemoveButton {
+    width: 24px;
+    height: 24px;
+    padding: 8px;
+    background-color: #ffffff;
+    color: #0070E0  ;
+    text-align: center;
+    line-height: 24px;
+    border-radius: 50%;
+    border: 1px solid #0070E0;
+}
+
+.playerRemoveButton:hover {
+    opacity: 0.7;
+    background-color: #0070E0;
+    color: #ffffff;
+    cursor: pointer;
+}
