@@ -18,38 +18,37 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
 
   return (
     // videoIds配列をmapでループ処理し、IDごとにiframeを生成する
-    <div className={styles.playerContainer}>
-      {videoIds.map((id) => (
-        <div key={id} className={styles.playerItem}>
-          <iframe
-            width="560"
-            height="315"
-            src={`https://www.youtube.com/embed/${id}`}
-            title={`YouTube video player ${id}`}
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          ></iframe>
-          <div
-            className={styles.playerRemoveButton}
-            onClick={() => onRemoveVideo(id)}
-          >
-            ✕
-          </div>
-        </div>
+    <ul className={styles.playerContainer}>
+      {videoIds.map((id, index) => (
+        <li className={styles.playerItem}>
+          {index % 2 === 0 && (
+            <div
+              className={styles.playerRemoveButton}
+              onClick={() => onRemoveVideo(id)}
+            >
+              ✕
+            </div>
+          )}
+          <ReactPlayer
+            key={id}
+            // refに、配列の各要素をセットするための関数を渡します
+            // ref={(el) => {
+            //   if (el) playerRefs.current[index] = el;
+            // }}
+            src={`http://www.youtube.com/watch?v=${id}`}
+            // ... 他のオプション
+          />
+          {index % 2 !== 0 && (
+            <div
+              className={styles.playerRemoveButton}
+              onClick={() => onRemoveVideo(id)}
+            >
+              ✕
+            </div>
+          )}
+        </li>
       ))}
-      {videoIds.map((id) => (
-        <ReactPlayer
-          key={id}
-          // refに、配列の各要素をセットするための関数を渡します
-          // ref={(el) => {
-          //   if (el) playerRefs.current[index] = el;
-          // }}
-          src={`http://www.youtube.com/watch?v=${id}`}
-          // ... 他のオプション
-        />
-      ))}
-    </div>
+    </ul>
   );
 };
 

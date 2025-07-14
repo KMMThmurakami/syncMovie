@@ -19,8 +19,8 @@ function App() {
       const urlObject = new URL(currentUrl);
       const id = urlObject.searchParams.get("v");
 
-      // IDが取得でき、かつまだリストにない場合のみ追加
-      if (id && !videoIds.includes(id)) {
+      // IDが取得できる場合のみ追加
+      if (id) {
         // videoIdをstateにセットする前に、IDが有効かチェック
         const isValid = await isValidYouTubeId(id);
 
@@ -31,7 +31,7 @@ function App() {
           alert("存在しない、または非公開の動画IDです。");
         }
       } else {
-        alert("有効なYouTubeのURLではないか、既に追加されています。");
+        alert("有効なYouTubeのURLではありません。");
       }
     } catch (error) {
       console.error(error);
