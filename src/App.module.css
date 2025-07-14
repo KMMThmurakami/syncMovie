@@ -9,3 +9,22 @@
     padding: 8px;
     gap: 8px;
 }
+
+.playerContainer {
+    display: flex; /* 動画を横に並べる */
+    flex-wrap: wrap; /* 画面幅で折り返す */
+    gap: 16px; /* 動画間のスペース */
+    justify-content: center;
+    margin-top: 16px;
+    padding: 8px;
+}
+
+.playerItem {
+    display: flex;
+    gap: 8px;
+}
+
+.playerItem:nth-of-type(even) {
+    display: flex;
+    flex-direction: row-reverse;
+}

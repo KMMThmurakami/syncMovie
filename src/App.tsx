@@ -3,6 +3,7 @@ import "./App.css";
 import styles from "./App.module.css";
 import YouTubePlayer from "./components/YouTubePlayer";
 import { isValidYouTubeId } from "./utils/youtube";
+import RemoveVideo from "./components/RemoveVideo";
 
 function App() {
   // 入力中のURLを管理するstate
@@ -74,11 +75,15 @@ function App() {
         </button>
       </div>
 
-      <YouTubePlayer
-        videoIds={videoIds}
-        onRemoveVideo={handleRemoveVideo}
-        playing={playing}
-      />
+      {/* videoIds配列をmapでループ処理し、IDごとにiframeを生成する */}
+      <ul className={styles.playerContainer}>
+        {videoIds.map((id, index) => (
+          <li key={`${id}_${index}`} className={styles.playerItem}>
+            <RemoveVideo id={id} onRemoveVideo={handleRemoveVideo} />
+            <YouTubePlayer id={id} playing={playing} />
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
