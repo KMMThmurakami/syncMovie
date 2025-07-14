@@ -4,6 +4,7 @@ import styles from "./App.module.css";
 import YouTubePlayer from "./components/YouTubePlayer";
 import { isValidYouTubeId } from "./utils/youtube";
 import RemoveVideo from "./components/RemoveVideo";
+import { FaPlay, FaPause } from "react-icons/fa";
 
 function App() {
   // 入力中のURLを管理するstate
@@ -56,11 +57,18 @@ function App() {
 
   return (
     <div className="App">
-      <h1>YouTube Viewer</h1>
-      <div className={styles.playAllButton}>
-        <button onClick={handlePlayAll}>すべて再生</button>
-        <button onClick={handlePauseAll}>すべて停止</button>
-      </div>
+      <h1>YouTube Sync Viewer</h1>
+      {playing ? (
+        <button className={styles.playAllButton} onClick={handlePauseAll}>
+          すべて停止 / ALL STOP
+          <FaPause />
+        </button>
+      ) : (
+        <button className={styles.playAllButton} onClick={handlePlayAll}>
+          すべて再生 / ALL PLAY
+          <FaPlay />
+        </button>
+      )}
       <div className={styles.inputContainer}>
         <input
           className={styles.urlTextInput}

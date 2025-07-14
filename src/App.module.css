@@ -6,8 +6,11 @@
 .playAllButton {
     display: flex;
     justify-content: center;
+    align-items: center;
     padding: 8px;
     gap: 8px;
+    margin: 0 auto;
+    width: 216px;
 }
 
 .playerContainer {
