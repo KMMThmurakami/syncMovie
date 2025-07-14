@@ -5,10 +5,18 @@ import YouTubePlayer from "./components/YouTubePlayer";
 import { isValidYouTubeId } from "./utils/youtube";
 
 function App() {
-  // ① 入力中のURLを管理するstate
+  // 入力中のURLを管理するstate
   const [currentUrl, setCurrentUrl] = useState("");
-  // ② 表示する動画IDの「リスト」を管理するstate
+  // 表示する動画IDの「リスト」を管理するstate
   const [videoIds, setVideoIds] = useState<string[]>([]);
+  // 全ての動画の再生状態を管理するstate
+  const [playing, setPlaying] = useState(false);
+
+  // 再生状態をtrueにする関数
+  const handlePlayAll = () => setPlaying(true);
+
+  // 再生状態をfalseにする関数
+  const handlePauseAll = () => setPlaying(false);
 
   // 動画を追加する関数
   const handleAddVideo = async () => {
@@ -48,6 +56,10 @@ function App() {
   return (
     <div className="App">
       <h1>YouTube Viewer</h1>
+      <div className={styles.playAllButton}>
+        <button onClick={handlePlayAll}>すべて再生</button>
+        <button onClick={handlePauseAll}>すべて停止</button>
+      </div>
       <div className={styles.inputContainer}>
         <input
           className={styles.urlTextInput}
@@ -62,7 +74,11 @@ function App() {
         </button>
       </div>
 
-      <YouTubePlayer videoIds={videoIds} onRemoveVideo={handleRemoveVideo} />
+      <YouTubePlayer
+        videoIds={videoIds}
+        onRemoveVideo={handleRemoveVideo}
+        playing={playing}
+      />
     </div>
   );
 }

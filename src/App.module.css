@@ -2,3 +2,10 @@
     width: 400px;
     padding: 8px;
 }
+
+.playAllButton {
+    display: flex;
+    justify-content: center;
+    padding: 8px;
+    gap: 8px;
+}
