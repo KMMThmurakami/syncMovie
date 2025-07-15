@@ -11,7 +11,6 @@ import {
   MediaSeekBackwardButton,
   MediaSeekForwardButton,
   MediaMuteButton,
-  MediaFullscreenButton,
 } from "media-chrome/react";
 
 interface YouTubePlayerProps {
@@ -46,7 +45,6 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ id, playing }) => {
         <MediaMuteButton />
         <MediaVolumeRange />
         <MediaPlaybackRateButton />
-        <MediaFullscreenButton />
       </MediaControlBar>
     </MediaController>
   );

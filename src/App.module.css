@@ -1,16 +1,27 @@
+.inputContainer {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px;
+}
+
 .urlTextInput {
     width: 400px;
     padding: 8px;
 }
 
+.addButton {
+    border: 1px solid #aaaaaa;
+}
+
 .playAllButton {
     display: flex;
-    justify-content: center;
+    justify-content: start;
     align-items: center;
-    padding: 8px;
     gap: 8px;
     margin: 0 auto;
-    width: 216px;
+    width: 240px;
+    border: 1px solid #aaaaaa;
 }
 
 .playerContainer {

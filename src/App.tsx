@@ -60,13 +60,13 @@ function App() {
       <h1>YouTube Sync Viewer</h1>
       {playing ? (
         <button className={styles.playAllButton} onClick={handlePauseAll}>
-          すべて停止 / ALL STOP
           <FaPause />
+          すべて停止 / ALL PAUSE
         </button>
       ) : (
         <button className={styles.playAllButton} onClick={handlePlayAll}>
-          すべて再生 / ALL PLAY
           <FaPlay />
+          すべて再生 / ALL PLAY
         </button>
       )}
       <div className={styles.inputContainer}>
