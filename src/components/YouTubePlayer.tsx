@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactPlayer from "react-player";
 import {
   MediaController,
@@ -16,17 +16,34 @@ import {
 interface YouTubePlayerProps {
   id: string;
   playing: boolean;
+  onPlayerReady: () => void;
 }
 
-const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ id, playing }) => {
-  const [firstPlaying, setFirstPlaying] = useState(false);
+const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
+  id,
+  playing,
+  onPlayerReady,
+}) => {
+  // 準備ができたかどうかを管理する内部state
+  const [isReady, setIsReady] = useState(false);
 
-  const onPlaying = async () => {
-    if (!firstPlaying) {
-      console.log("onPlaying");
-      setFirstPlaying(true);
+  // onPlayingイベントハンドラ
+  const handleOnPlaying = () => {
+    // まだ準備完了通知を送っていない場合のみ実行
+    if (!isReady) {
+      console.log(`Player ${id} is ready.`);
+      onPlayerReady(); // 親コンポーネントに通知
+      setIsReady(true); // 通知済みフラグを立てる
     }
   };
+
+  // playing propがfalseに変わったら、isReadyもリセットする
+  // これにより、再度STANDBYを押したときに正しく動作する
+  useEffect(() => {
+    if (!playing) {
+      setIsReady(false);
+    }
+  }, [playing]);
 
   return (
     <MediaController
@@ -38,7 +55,7 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ id, playing }) => {
       <ReactPlayer
         slot="media"
         src={`https://www.youtube.com/watch?v=${id}`}
-        onPlaying={onPlaying}
+        onPlaying={handleOnPlaying}
         width="560px"
         height="315px"
         playing={playing}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import styles from "./App.module.css";
 import YouTubePlayer from "./components/YouTubePlayer";
@@ -15,23 +15,30 @@ function App() {
   const [playing, setPlaying] = useState(false);
   // スタンバイ状態を管理するstate
   const [standby, setStandby] = useState(false);
+  // 再生準備が完了した動画の数をカウントするstate
+  const [readyCount, setReadyCount] = useState(0);
 
   // 再生状態をtrueにする関数
-  const handlePlayAll = async () => {
-    setPlaying(true);
-  };
-
+  const handlePlayAll = () => setPlaying(true);
   // 再生状態をfalseにする関数
   const handlePauseAll = () => setPlaying(false);
 
-  // スタンバイ状態をtrueにする関数
-  const handleStandby = () => {
-    handlePlayAll();
-    setTimeout(() => {
-      handlePauseAll();
-      setStandby(true);
-    }, 500);
+  // 子コンポーネントから呼ばれるコールバック関数
+  const handlePlayerReady = () => {
+    // カウントを1増やす
+    setReadyCount((count) => count + 1);
   };
+
+  // readyCountを監視するuseEffect
+  useEffect(() => {
+    // 動画が存在し、かつ準備完了カウントが動画の総数に達したら実行
+    if (videoIds.length > 0 && readyCount === videoIds.length) {
+      console.log("All players are ready. Pausing now.");
+      handlePauseAll();
+      setReadyCount(0); // カウンターをリセット
+      setStandby(true);
+    }
+  }, [readyCount, videoIds.length]);
 
   // 動画を追加する関数
   const handleAddVideo = async () => {
@@ -49,6 +56,7 @@ function App() {
 
         if (isValid) {
           setVideoIds([...videoIds, id]);
+          setStandby(false);
           setCurrentUrl("");
         } else {
           alert("存在しない、または非公開の動画IDです。");
@@ -72,7 +80,7 @@ function App() {
     <div className="App">
       <h1>YouTube Sync Viewer</h1>
       {!standby && (
-        <button className={styles.playAllButton} onClick={handleStandby}>
+        <button className={styles.playAllButton} onClick={handlePlayAll}>
           <FaPowerOff />
           再生準備 / STANDBY
         </button>
@@ -109,7 +117,11 @@ function App() {
         {videoIds.map((id, index) => (
           <li key={`${id}_${index}`} className={styles.playerItem}>
             <RemoveVideo id={id} onRemoveVideo={handleRemoveVideo} />
-            <YouTubePlayer id={id} playing={playing} />
+            <YouTubePlayer
+              id={id}
+              playing={playing}
+              onPlayerReady={handlePlayerReady}
+            />
           </li>
         ))}
       </ul>
