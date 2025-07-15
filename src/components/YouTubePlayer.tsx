@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactPlayer from "react-player";
 import {
   MediaController,
@@ -19,6 +19,15 @@ interface YouTubePlayerProps {
 }
 
 const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ id, playing }) => {
+  const [firstPlaying, setFirstPlaying] = useState(false);
+
+  const onPlaying = async () => {
+    if (!firstPlaying) {
+      console.log("onPlaying");
+      setFirstPlaying(true);
+    }
+  };
+
   return (
     <MediaController
       style={{
@@ -29,7 +38,7 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ id, playing }) => {
       <ReactPlayer
         slot="media"
         src={`https://www.youtube.com/watch?v=${id}`}
-        // onReady={onReady}
+        onPlaying={onPlaying}
         width="560px"
         height="315px"
         playing={playing}

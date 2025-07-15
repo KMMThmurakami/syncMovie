@@ -4,7 +4,7 @@ import styles from "./App.module.css";
 import YouTubePlayer from "./components/YouTubePlayer";
 import { isValidYouTubeId } from "./utils/youtube";
 import RemoveVideo from "./components/RemoveVideo";
-import { FaPlay, FaPause } from "react-icons/fa";
+import { FaPlay, FaPause, FaPowerOff } from "react-icons/fa";
 
 function App() {
   // 入力中のURLを管理するstate
@@ -13,12 +13,25 @@ function App() {
   const [videoIds, setVideoIds] = useState<string[]>([]);
   // 全ての動画の再生状態を管理するstate
   const [playing, setPlaying] = useState(false);
+  // スタンバイ状態を管理するstate
+  const [standby, setStandby] = useState(false);
 
   // 再生状態をtrueにする関数
-  const handlePlayAll = () => setPlaying(true);
+  const handlePlayAll = async () => {
+    setPlaying(true);
+  };
 
   // 再生状態をfalseにする関数
   const handlePauseAll = () => setPlaying(false);
+
+  // スタンバイ状態をtrueにする関数
+  const handleStandby = () => {
+    handlePlayAll();
+    setTimeout(() => {
+      handlePauseAll();
+      setStandby(true);
+    }, 500);
+  };
 
   // 動画を追加する関数
   const handleAddVideo = async () => {
@@ -58,17 +71,25 @@ function App() {
   return (
     <div className="App">
       <h1>YouTube Sync Viewer</h1>
-      {playing ? (
+      {!standby && (
+        <button className={styles.playAllButton} onClick={handleStandby}>
+          <FaPowerOff />
+          再生準備 / STANDBY
+        </button>
+      )}
+      {standby && playing && (
         <button className={styles.playAllButton} onClick={handlePauseAll}>
           <FaPause />
           すべて停止 / ALL PAUSE
         </button>
-      ) : (
+      )}
+      {standby && !playing && (
         <button className={styles.playAllButton} onClick={handlePlayAll}>
           <FaPlay />
           すべて再生 / ALL PLAY
         </button>
       )}
+
       <div className={styles.inputContainer}>
         <input
           className={styles.urlTextInput}
