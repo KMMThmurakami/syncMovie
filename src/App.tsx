@@ -8,7 +8,7 @@ import { FaPlay, FaPause, FaPowerOff } from "react-icons/fa";
 
 function App() {
   // 入力中のURLを管理するstate
-  const [inputUrls, setInputUrls] = useState<string[]>(["", ""]);
+  const [currentUrl, setCurrentUrl] = useState("");
   // 表示する動画IDの「リスト」を管理するstate
   const [videoIds, setVideoIds] = useState<string[]>([]);
   // 全ての動画の再生状態を管理するstate
@@ -40,43 +40,34 @@ function App() {
     }
   }, [readyCount, videoIds.length]);
 
-  // 動画URL入力時の関数
-  const handleUrlChange = (indexToUpdate: number, newValue: string) => {
-    const newInputUrls = [...inputUrls];
-    newInputUrls[indexToUpdate] = newValue;
-    setInputUrls(newInputUrls);
-  };
+  // 動画を追加する関数
+  const handleAddVideo = async () => {
+    // URLが空なら何もしない
+    if (!currentUrl) return;
 
-  // 動画追加関数
-  const handleAddVideos = async () => {
-    for (const url of inputUrls) {
-      if (!url) continue;
-      // URLが入力されている場合のみ処理
-      try {
-        const urlObject = new URL(url);
-        const id = urlObject.searchParams.get("v");
+    try {
+      const urlObject = new URL(currentUrl);
+      const id = urlObject.searchParams.get("v");
 
-        // IDが取得できる場合のみ追加
-        if (id) {
-          // videoIdをstateにセットする前に、IDが有効かチェック
-          const isValid = await isValidYouTubeId(id);
+      // IDが取得できる場合のみ追加
+      if (id) {
+        // videoIdをstateにセットする前に、IDが有効かチェック
+        const isValid = await isValidYouTubeId(id);
 
-          if (isValid) {
-            setVideoIds((videoIds) => [...videoIds, id]);
-            setStandby(false);
-            // setCurrentUrl("");
-          } else {
-            alert("存在しない、または非公開の動画IDです。");
-          }
+        if (isValid) {
+          setVideoIds([...videoIds, id]);
+          setStandby(false);
+          setCurrentUrl("");
         } else {
-          alert("有効なYouTubeのURLではありません。");
+          alert("存在しない、または非公開の動画IDです。");
         }
-      } catch (error) {
-        console.error(error);
-        alert("URLの形式が正しくありません。");
+      } else {
+        alert("有効なYouTubeのURLではありません。");
       }
+    } catch (error) {
+      console.error(error);
+      alert("URLの形式が正しくありません。");
     }
-    setInputUrls(["", ""]);
   };
 
   // インデックスを指定して動画を削除する関数
@@ -89,22 +80,6 @@ function App() {
   return (
     <div className="App">
       <h1>YouTube Sync Viewer</h1>
-      <div className={styles.inputContainer}>
-        {inputUrls.map((url, index) => (
-          <input
-            key={`url-input-${index}`}
-            name={`video-${index}`}
-            className={styles.urlTextInput}
-            placeholder={`YouTube動画のURL ${index + 1}`}
-            value={url}
-            onChange={(e) => handleUrlChange(index, e.target.value)}
-          />
-        ))}
-        <button onClick={handleAddVideos} className={styles.addButton}>
-          追加
-        </button>
-      </div>
-
       {!standby && (
         <button className={styles.playAllButton} onClick={handlePlayAll}>
           <FaPowerOff />
@@ -123,6 +98,20 @@ function App() {
           すべて再生 / ALL PLAY
         </button>
       )}
+
+      <div className={styles.inputContainer}>
+        <input
+          className={styles.urlTextInput}
+          type="text"
+          placeholder="YouTube動画のURLを貼り付け"
+          value={currentUrl}
+          onChange={(e) => setCurrentUrl(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleAddVideo()}
+        />
+        <button onClick={handleAddVideo} className={styles.addButton}>
+          追加
+        </button>
+      </div>
 
       {/* videoIds配列をmapでループ処理し、IDごとにiframeを生成する */}
       <ul className={styles.playerContainer}>
