@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ReactPlayer from "react-player";
 import {
   MediaController,
@@ -36,14 +36,6 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
       setIsReady(true); // 通知済みフラグを立てる
     }
   };
-
-  // playing propがfalseに変わったら、isReadyもリセットする
-  // これにより、再度STANDBYを押したときに正しく動作する
-  useEffect(() => {
-    if (!playing) {
-      setIsReady(false);
-    }
-  }, [playing]);
 
   return (
     <MediaController
