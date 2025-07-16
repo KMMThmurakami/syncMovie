@@ -70,10 +70,11 @@ function App() {
     }
   };
 
-  // IDを指定して動画を削除する関数
-  const handleRemoveVideo = (idToRemove: string) => {
-    const newVideoIds = videoIds.filter((id) => id !== idToRemove);
-    setVideoIds(newVideoIds);
+  // インデックスを指定して動画を削除する関数
+  const handleRemoveVideo = (indexToRemove: number) => {
+    setVideoIds((newVideoIds) =>
+      newVideoIds.filter((_id, index) => index !== indexToRemove)
+    );
   };
 
   return (
@@ -116,7 +117,7 @@ function App() {
       <ul className={styles.playerContainer}>
         {videoIds.map((id, index) => (
           <li key={`${id}_${index}`} className={styles.playerItem}>
-            <RemoveVideo id={id} onRemoveVideo={handleRemoveVideo} />
+            <RemoveVideo index={index} onRemoveVideo={handleRemoveVideo} />
             <YouTubePlayer
               id={id}
               playing={playing}

@@ -1,15 +1,15 @@
 import styles from "./RemoveVideo.module.css";
 
 interface RemoveVideoProps {
-  id: string;
-  onRemoveVideo: (id: string) => void;
+  index: number;
+  onRemoveVideo: (index: number) => void;
 }
 
-const RemoveVideo: React.FC<RemoveVideoProps> = ({ id, onRemoveVideo }) => {
+const RemoveVideo: React.FC<RemoveVideoProps> = ({ index, onRemoveVideo }) => {
   return (
     <div
       className={styles.playerRemoveButton}
-      onClick={() => onRemoveVideo(id)}
+      onClick={() => onRemoveVideo(index)}
     >
       ✕
     </div>
