@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ReactPlayer from "react-player";
 import {
   MediaController,
@@ -37,21 +37,8 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
     }
   };
 
-  // playing propがfalseに変わったら、isReadyもリセットする
-  // これにより、再度STANDBYを押したときに正しく動作する
-  useEffect(() => {
-    if (!playing) {
-      setIsReady(false);
-    }
-  }, [playing]);
-
   return (
-    <MediaController
-      style={{
-        width: "100%",
-        aspectRatio: "16/9",
-      }}
-    >
+    <MediaController>
       <ReactPlayer
         slot="media"
         src={`https://www.youtube.com/watch?v=${id}`}
