@@ -38,12 +38,7 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
   };
 
   return (
-    <MediaController
-      style={{
-        width: "100%",
-        aspectRatio: "16/9",
-      }}
-    >
+    <MediaController>
       <ReactPlayer
         slot="media"
         src={`https://www.youtube.com/watch?v=${id}`}
