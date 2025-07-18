@@ -10,8 +10,31 @@
     padding: 8px;
 }
 
+.numberInput {
+    width: 100px;
+    text-align: center;
+}
+
+/* Chrome, Safari, Edge, Operaで数値入力の矢印を非表示にする */
+.numberInput::-webkit-outer-spin-button,
+.numberInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefoxで数値入力の矢印を非表示にする */
+.numberInput[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
 .addButton {
     border: 1px solid #aaaaaa;
+}
+
+.jumpButton {
+    border: 1px solid #aaaaaa;
+    width: 108px;
 }
 
 .playAllButton {

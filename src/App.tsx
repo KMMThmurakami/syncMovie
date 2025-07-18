@@ -87,18 +87,33 @@ function App() {
   return (
     <div className="App">
       <h1>YouTube Sync Viewer</h1>
-      {playing && (
-        <button className={styles.playAllButton} onClick={handlePauseAll}>
-          <FaPause />
-          すべて停止 / ALL PAUSE
+      <div className={`${styles.inputContainer}`}>
+        {playing && (
+          <button className={styles.playAllButton} onClick={handlePauseAll}>
+            <FaPause />
+            すべて停止 / ALL PAUSE
+          </button>
+        )}
+        {!playing && (
+          <button className={styles.playAllButton} onClick={handlePlayAll}>
+            <FaPlay />
+            すべて再生 / ALL PLAY
+          </button>
+        )}
+        <input
+          name="seek"
+          type="number"
+          min={0}
+          max={9999}
+          onChange={(e) => setSeek(Number(e.target.value))}
+          onKeyDown={(e) => e.key === "Enter" && handleJumpSeek()}
+          className={styles.numberInput}
+          placeholder="秒数を入力..."
+        />
+        <button onClick={handleJumpSeek} className={styles.jumpButton}>
+          ジャンプ
         </button>
-      )}
-      {!playing && (
-        <button className={styles.playAllButton} onClick={handlePlayAll}>
-          <FaPlay />
-          すべて再生 / ALL PLAY
-        </button>
-      )}
+      </div>
 
       <div className={styles.inputContainer}>
         <input
@@ -114,31 +129,14 @@ function App() {
           追加
         </button>
       </div>
-      <div>
-        <div>Seek</div>
-        <div>
-          {/* <input
-            type="range"
-            min={0}
-            max={0.999999}
-            defaultValue={0}
-            step="any"
-            onMouseUp={handleSeekMouseUp}
-          /> */}
-          <input
-            name="seek"
-            type="number"
-            min={0}
-            max={9999}
-            defaultValue={0}
-            onChange={(e) => setSeek(Number(e.target.value))}
-            onKeyDown={(e) => e.key === "Enter" && handleJumpSeek()}
-          />
-          <button onClick={handleJumpSeek} className={styles.addButton}>
-            ジャンプ
-          </button>
-        </div>
-      </div>
+      {/* <input
+        type="range"
+        min={0}
+        max={0.999999}
+        defaultValue={0}
+        step="any"
+        onMouseUp={handleSeekMouseUp}
+      /> */}
 
       <ul className={styles.playerContainer}>
         {videoIds.map((id, index) => (
