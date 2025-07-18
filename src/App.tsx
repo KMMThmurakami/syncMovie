@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import "./App.css";
 import styles from "./App.module.css";
 import YouTubePlayer from "./components/YouTubePlayer";
@@ -22,6 +22,28 @@ function App() {
   const handlePlayAll = () => setPlaying(true);
   // 再生状態をfalseにする関数
   const handlePauseAll = () => setPlaying(false);
+
+  // シーク関連
+  const [state, setState] = useState<number>(0);
+  const playerRef = useRef<HTMLVideoElement | null>(null);
+
+  const handleSeekChange = (event: React.SyntheticEvent<HTMLInputElement>) => {
+    const inputTarget = event.target as HTMLInputElement;
+    setState(() => Number.parseFloat(inputTarget.value));
+  };
+
+  const handleSeekMouseUp = (event: React.SyntheticEvent<HTMLInputElement>) => {
+    const inputTarget = event.target as HTMLInputElement;
+    if (playerRef.current) {
+      playerRef.current.currentTime =
+        Number.parseFloat(inputTarget.value) * playerRef.current.duration;
+    }
+  };
+
+  const setPlayerRef = useCallback((player: HTMLVideoElement) => {
+    if (!player) return;
+    playerRef.current = player;
+  }, []);
 
   // 子コンポーネントから呼ばれるコールバック関数
   const handlePlayerReady = () => {
@@ -112,7 +134,20 @@ function App() {
           追加
         </button>
       </div>
-
+      <div>
+        <div>Seek</div>
+        <div>
+          <input
+            type="range"
+            min={0}
+            max={0.999999}
+            value={state}
+            step="any"
+            onChange={handleSeekChange}
+            onMouseUp={handleSeekMouseUp}
+          />
+        </div>
+      </div>
       {/* videoIds配列をmapでループ処理し、IDごとにiframeを生成する */}
       <ul className={styles.playerContainer}>
         {videoIds.map((id, index) => (
@@ -122,6 +157,7 @@ function App() {
               id={id}
               playing={playing}
               onPlayerReady={handlePlayerReady}
+              ref={setPlayerRef}
             />
           </li>
         ))}
