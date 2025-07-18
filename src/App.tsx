@@ -114,6 +114,7 @@ function App() {
           onChange={(e) => setSeek(Number(e.target.value))}
           onKeyDown={(e) => e.key === "Enter" && handleJumpSeek()}
           className={styles.numberInput}
+          defaultValue={0}
           placeholder="秒数を入力..."
         />
         <button onClick={handleJumpSeek} className={styles.jumpButton}>
@@ -122,66 +123,43 @@ function App() {
       </div>
 
       <ul className={styles.playerContainer}>
-        {videoIds[0] === "" || videoIds[0] === null ? (
-          <li className={styles.playerNoLoad}>
-            <div className={styles.inputContainer}>
-              <input
-                name="videoSrc"
-                className={styles.urlTextInput}
-                type="text"
-                placeholder="YouTube動画のURLを貼り付け"
-                value={currentUrl}
-                onChange={(e) => setCurrentUrl(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleAddVideo(0)}
-              />
-              <button
-                onClick={() => handleAddVideo(0)}
-                className={styles.addButton}
-              >
-                追加
-              </button>
-            </div>
+        {videoIds.map((id, index) => (
+          <li
+            key={`${id}_${index}`}
+            className={
+              id === "" || id === null ? styles.playerNoLoad : styles.playerItem
+            }
+          >
+            {id === "" || id === null ? (
+              <div className={styles.inputContainer}>
+                <input
+                  name="videoSrc"
+                  className={styles.urlTextInput}
+                  type="text"
+                  placeholder="YouTube動画のURLを貼り付け"
+                  value={currentUrl}
+                  onChange={(e) => setCurrentUrl(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleAddVideo(index)}
+                />
+                <button
+                  onClick={() => handleAddVideo(index)}
+                  className={styles.addButton}
+                >
+                  追加
+                </button>
+              </div>
+            ) : (
+              <>
+                <RemoveVideo index={index} onRemoveVideo={handleRemoveVideo} />
+                <YouTubePlayer
+                  id={id}
+                  playing={playing}
+                  ref={(el) => (playerRefs.current[index] = el)}
+                />
+              </>
+            )}
           </li>
-        ) : (
-          <li key={`${videoIds[0]}_0`} className={styles.playerItem}>
-            <RemoveVideo index={0} onRemoveVideo={handleRemoveVideo} />
-            <YouTubePlayer
-              id={`${videoIds[0]}`}
-              playing={playing}
-              ref={(el) => (playerRefs.current[0] = el)}
-            />
-          </li>
-        )}
-        {videoIds[1] === "" ? (
-          <li className={styles.playerNoLoad}>
-            <div className={styles.inputContainer}>
-              <input
-                name="videoSrc"
-                className={styles.urlTextInput}
-                type="text"
-                placeholder="YouTube動画のURLを貼り付け"
-                value={currentUrl}
-                onChange={(e) => setCurrentUrl(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleAddVideo(1)}
-              />
-              <button
-                onClick={() => handleAddVideo(1)}
-                className={styles.addButton}
-              >
-                追加
-              </button>
-            </div>
-          </li>
-        ) : (
-          <li key={`${videoIds[1]}_1`} className={styles.playerItem}>
-            <RemoveVideo index={1} onRemoveVideo={handleRemoveVideo} />
-            <YouTubePlayer
-              id={`${videoIds[1]}`}
-              playing={playing}
-              ref={(el) => (playerRefs.current[1] = el)}
-            />
-          </li>
-        )}
+        ))}
       </ul>
     </div>
   );

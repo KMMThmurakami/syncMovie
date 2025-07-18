@@ -65,7 +65,6 @@
 }
 
 .playerItem:nth-of-type(even) {
-    display: flex;
     flex-direction: row-reverse;
 }
 
