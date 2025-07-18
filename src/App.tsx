@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef } from "react";
 import "./App.css";
 import styles from "./App.module.css";
 import YouTubePlayer from "./components/YouTubePlayer";
@@ -20,26 +20,32 @@ function App() {
   const handlePauseAll = () => setPlaying(false);
 
   // シーク関連
-  const [state, setState] = useState<number>(0);
-  const playerRef = useRef<HTMLVideoElement | null>(null);
+  const [seek, setSeek] = useState(0);
+  const playerRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
-  const handleSeekChange = (event: React.SyntheticEvent<HTMLInputElement>) => {
-    const inputTarget = event.target as HTMLInputElement;
-    setState(() => Number.parseFloat(inputTarget.value));
+  // const handleSeekMouseUp = (event: React.SyntheticEvent<HTMLInputElement>) => {
+  //   const inputTarget = event.target as HTMLInputElement;
+  //   const seekTimeFraction = Number(inputTarget.value);
+  //   console.log(seekTimeFraction);
+
+  //   playerRefs.current.forEach((player) => {
+  //     // playerが存在し、動画の長さ(duration)が取得できている場合のみ実行
+  //     if (player && player.duration) {
+  //       player.currentTime = seekTimeFraction * player.duration;
+  //     }
+  //   });
+  // };
+
+  const handleJumpSeek = () => {
+    const seekTimeFraction = seek;
+
+    playerRefs.current.forEach((player) => {
+      // playerが存在し、動画の長さ(duration)が取得できている場合のみ実行
+      if (player && player.duration) {
+        player.currentTime = seekTimeFraction;
+      }
+    });
   };
-
-  const handleSeekMouseUp = (event: React.SyntheticEvent<HTMLInputElement>) => {
-    const inputTarget = event.target as HTMLInputElement;
-    if (playerRef.current) {
-      playerRef.current.currentTime =
-        Number.parseFloat(inputTarget.value) * playerRef.current.duration;
-    }
-  };
-
-  const setPlayerRef = useCallback((player: HTMLVideoElement) => {
-    if (!player) return;
-    playerRef.current = player;
-  }, []);
 
   // 動画を追加する関数
   const handleAddVideo = async () => {
@@ -75,6 +81,7 @@ function App() {
     setVideoIds((newVideoIds) =>
       newVideoIds.filter((_id, index) => index !== indexToRemove)
     );
+    playerRefs.current.splice(indexToRemove, 1);
   };
 
   return (
@@ -95,6 +102,7 @@ function App() {
 
       <div className={styles.inputContainer}>
         <input
+          name="videoSrc"
           className={styles.urlTextInput}
           type="text"
           placeholder="YouTube動画のURLを貼り付け"
@@ -109,23 +117,38 @@ function App() {
       <div>
         <div>Seek</div>
         <div>
-          <input
+          {/* <input
             type="range"
             min={0}
             max={0.999999}
-            value={state}
+            defaultValue={0}
             step="any"
-            onChange={handleSeekChange}
             onMouseUp={handleSeekMouseUp}
+          /> */}
+          <input
+            name="seek"
+            type="number"
+            min={0}
+            max={9999}
+            defaultValue={0}
+            onChange={(e) => setSeek(Number(e.target.value))}
+            onKeyDown={(e) => e.key === "Enter" && handleJumpSeek()}
           />
+          <button onClick={handleJumpSeek} className={styles.addButton}>
+            ジャンプ
+          </button>
         </div>
       </div>
-      {/* videoIds配列をmapでループ処理し、IDごとにiframeを生成する */}
+
       <ul className={styles.playerContainer}>
         {videoIds.map((id, index) => (
           <li key={`${id}_${index}`} className={styles.playerItem}>
             <RemoveVideo index={index} onRemoveVideo={handleRemoveVideo} />
-            <YouTubePlayer id={id} playing={playing} ref={setPlayerRef} />
+            <YouTubePlayer
+              id={id}
+              playing={playing}
+              ref={(el) => (playerRefs.current[index] = el)}
+            />
           </li>
         ))}
       </ul>
