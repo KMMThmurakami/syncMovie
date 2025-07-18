@@ -10,7 +10,7 @@ function App() {
   // 入力中のURLを管理するstate
   const [currentUrl, setCurrentUrl] = useState("");
   // 表示する動画IDの「リスト」を管理するstate
-  const [videoIds, setVideoIds] = useState<string[]>([]);
+  const [videoIds, setVideoIds] = useState<string[]>(["", ""]);
   // 全ての動画の再生状態を管理するstate
   const [playing, setPlaying] = useState(false);
 
@@ -47,8 +47,14 @@ function App() {
     });
   };
 
+  const updateVideoId = (index: number, newId: string) => {
+    setVideoIds((currentIds) =>
+      currentIds.map((id, i) => (i === index ? newId : id))
+    );
+  };
+
   // 動画を追加する関数
-  const handleAddVideo = async () => {
+  const handleAddVideo = async (index: number) => {
     // URLが空なら何もしない
     if (!currentUrl) return;
 
@@ -62,7 +68,7 @@ function App() {
         const isValid = await isValidYouTubeId(id);
 
         if (isValid) {
-          setVideoIds([...videoIds, id]);
+          updateVideoId(index, id);
           setCurrentUrl("");
         } else {
           alert("存在しない、または非公開の動画IDです。");
@@ -78,8 +84,8 @@ function App() {
 
   // インデックスを指定して動画を削除する関数
   const handleRemoveVideo = (indexToRemove: number) => {
-    setVideoIds((newVideoIds) =>
-      newVideoIds.filter((_id, index) => index !== indexToRemove)
+    setVideoIds((currentIds) =>
+      currentIds.map((id, i) => (i === indexToRemove ? "" : id))
     );
     playerRefs.current.splice(indexToRemove, 1);
   };
@@ -116,7 +122,7 @@ function App() {
       </div>
 
       <ul className={styles.playerContainer}>
-        {videoIds[0] === undefined ? (
+        {videoIds[0] === "" || videoIds[0] === null ? (
           <li className={styles.playerNoLoad}>
             <div className={styles.inputContainer}>
               <input
@@ -126,9 +132,12 @@ function App() {
                 placeholder="YouTube動画のURLを貼り付け"
                 value={currentUrl}
                 onChange={(e) => setCurrentUrl(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleAddVideo()}
+                onKeyDown={(e) => e.key === "Enter" && handleAddVideo(0)}
               />
-              <button onClick={handleAddVideo} className={styles.addButton}>
+              <button
+                onClick={() => handleAddVideo(0)}
+                className={styles.addButton}
+              >
                 追加
               </button>
             </div>
@@ -143,7 +152,7 @@ function App() {
             />
           </li>
         )}
-        {videoIds[1] === undefined ? (
+        {videoIds[1] === "" ? (
           <li className={styles.playerNoLoad}>
             <div className={styles.inputContainer}>
               <input
@@ -153,9 +162,12 @@ function App() {
                 placeholder="YouTube動画のURLを貼り付け"
                 value={currentUrl}
                 onChange={(e) => setCurrentUrl(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleAddVideo()}
+                onKeyDown={(e) => e.key === "Enter" && handleAddVideo(1)}
               />
-              <button onClick={handleAddVideo} className={styles.addButton}>
+              <button
+                onClick={() => handleAddVideo(1)}
+                className={styles.addButton}
+              >
                 追加
               </button>
             </div>
