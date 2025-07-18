@@ -111,44 +111,65 @@ function App() {
           placeholder="秒数を入力..."
         />
         <button onClick={handleJumpSeek} className={styles.jumpButton}>
-          ジャンプ
+          秒にジャンプ
         </button>
       </div>
-
-      <div className={styles.inputContainer}>
-        <input
-          name="videoSrc"
-          className={styles.urlTextInput}
-          type="text"
-          placeholder="YouTube動画のURLを貼り付け"
-          value={currentUrl}
-          onChange={(e) => setCurrentUrl(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleAddVideo()}
-        />
-        <button onClick={handleAddVideo} className={styles.addButton}>
-          追加
-        </button>
-      </div>
-      {/* <input
-        type="range"
-        min={0}
-        max={0.999999}
-        defaultValue={0}
-        step="any"
-        onMouseUp={handleSeekMouseUp}
-      /> */}
 
       <ul className={styles.playerContainer}>
-        {videoIds.map((id, index) => (
-          <li key={`${id}_${index}`} className={styles.playerItem}>
-            <RemoveVideo index={index} onRemoveVideo={handleRemoveVideo} />
+        {videoIds[0] === undefined ? (
+          <li className={styles.playerNoLoad}>
+            <div className={styles.inputContainer}>
+              <input
+                name="videoSrc"
+                className={styles.urlTextInput}
+                type="text"
+                placeholder="YouTube動画のURLを貼り付け"
+                value={currentUrl}
+                onChange={(e) => setCurrentUrl(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleAddVideo()}
+              />
+              <button onClick={handleAddVideo} className={styles.addButton}>
+                追加
+              </button>
+            </div>
+          </li>
+        ) : (
+          <li key={`${videoIds[0]}_0`} className={styles.playerItem}>
+            <RemoveVideo index={0} onRemoveVideo={handleRemoveVideo} />
             <YouTubePlayer
-              id={id}
+              id={`${videoIds[0]}`}
               playing={playing}
-              ref={(el) => (playerRefs.current[index] = el)}
+              ref={(el) => (playerRefs.current[0] = el)}
             />
           </li>
-        ))}
+        )}
+        {videoIds[1] === undefined ? (
+          <li className={styles.playerNoLoad}>
+            <div className={styles.inputContainer}>
+              <input
+                name="videoSrc"
+                className={styles.urlTextInput}
+                type="text"
+                placeholder="YouTube動画のURLを貼り付け"
+                value={currentUrl}
+                onChange={(e) => setCurrentUrl(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleAddVideo()}
+              />
+              <button onClick={handleAddVideo} className={styles.addButton}>
+                追加
+              </button>
+            </div>
+          </li>
+        ) : (
+          <li key={`${videoIds[1]}_1`} className={styles.playerItem}>
+            <RemoveVideo index={1} onRemoveVideo={handleRemoveVideo} />
+            <YouTubePlayer
+              id={`${videoIds[1]}`}
+              playing={playing}
+              ref={(el) => (playerRefs.current[1] = el)}
+            />
+          </li>
+        )}
       </ul>
     </div>
   );

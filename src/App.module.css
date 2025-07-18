@@ -3,6 +3,7 @@
     justify-content: center;
     gap: 8px;
     padding: 8px;
+    height: 48px;
 }
 
 .urlTextInput {
@@ -12,7 +13,8 @@
 
 .numberInput {
     width: 100px;
-    text-align: center;
+    text-align: right;
+    padding: 8px;
 }
 
 /* Chrome, Safari, Edge, Operaで数値入力の矢印を非表示にする */
@@ -34,7 +36,7 @@
 
 .jumpButton {
     border: 1px solid #aaaaaa;
-    width: 108px;
+    width: 140px;
 }
 
 .playAllButton {
@@ -58,9 +60,21 @@
 .playerItem {
     display: flex;
     gap: 8px;
+    width: 615px;
+    height: 315px;
 }
 
 .playerItem:nth-of-type(even) {
     display: flex;
     flex-direction: row-reverse;
+}
+
+.playerNoLoad {
+    width: 615px;
+    height: 315px;
+    display: block;
+    background: #cccccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
