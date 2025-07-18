@@ -8,7 +8,7 @@ import { FaPlay, FaPause } from "react-icons/fa";
 
 function App() {
   // 入力中のURLを管理するstate
-  const [currentUrl, setCurrentUrl] = useState("");
+  const [inputValues, setInputValues] = useState<string[]>(["", ""]);
   // 表示する動画IDの「リスト」を管理するstate
   const [videoIds, setVideoIds] = useState<string[]>(["", ""]);
   // 全ての動画の再生状態を管理するstate
@@ -54,22 +54,22 @@ function App() {
   };
 
   // 動画を追加する関数
-  const handleAddVideo = async (index: number) => {
+  const handleAddVideo = async (index: number, url: string) => {
     // URLが空なら何もしない
-    if (!currentUrl) return;
+    if (!url) return;
 
     try {
-      const urlObject = new URL(currentUrl);
+      const urlObject = new URL(url);
       const id = urlObject.searchParams.get("v");
 
-      // IDが取得できる場合のみ追加
       if (id) {
-        // videoIdをstateにセットする前に、IDが有効かチェック
         const isValid = await isValidYouTubeId(id);
 
         if (isValid) {
           updateVideoId(index, id);
-          setCurrentUrl("");
+          setInputValues((currentValues) =>
+            currentValues.map((val, i) => (i === index ? "" : val))
+          );
         } else {
           alert("存在しない、または非公開の動画IDです。");
         }
@@ -88,6 +88,13 @@ function App() {
       currentIds.map((id, i) => (i === indexToRemove ? "" : id))
     );
     playerRefs.current.splice(indexToRemove, 1);
+  };
+
+  // 対応する入力欄の値を更新する関数
+  const handleInputChange = (index: number, value: string) => {
+    setInputValues((currentValues) =>
+      currentValues.map((val, i) => (i === index ? value : val))
+    );
   };
 
   return (
@@ -137,12 +144,15 @@ function App() {
                   className={styles.urlTextInput}
                   type="text"
                   placeholder="YouTube動画のURLを貼り付け"
-                  value={currentUrl}
-                  onChange={(e) => setCurrentUrl(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleAddVideo(index)}
+                  value={inputValues[index]}
+                  onChange={(e) => handleInputChange(index, e.target.value)}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" &&
+                    handleAddVideo(index, inputValues[index])
+                  }
                 />
                 <button
-                  onClick={() => handleAddVideo(index)}
+                  onClick={() => handleAddVideo(index, inputValues[index])}
                   className={styles.addButton}
                 >
                   追加
