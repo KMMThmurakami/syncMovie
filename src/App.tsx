@@ -5,6 +5,7 @@ import YouTubePlayer from "./components/YouTubePlayer";
 import { isValidYouTubeId } from "./utils/youtube";
 import RemoveVideo from "./components/RemoveVideo";
 import { FaPlay, FaPause } from "react-icons/fa";
+import { Resizable } from "re-resizable";
 
 function App() {
   // 入力中のURLを管理するstate
@@ -18,6 +19,10 @@ function App() {
   const handlePlayAll = () => setPlaying(true);
   // 再生状態をfalseにする関数
   const handlePauseAll = () => setPlaying(false);
+
+  // 動画ウィンドウサイズ
+  const [flexWidth, setFlexWidth] = useState<string[]>(["560px", "560px"]);
+  const [flexHeight, setFlexHeight] = useState<string[]>(["315px", "315px"]);
 
   // シーク関連
   const [seek, setSeek] = useState(0);
@@ -97,6 +102,16 @@ function App() {
     );
   };
 
+  // 動画リサイズ
+  const handleResizeVideo = (index: number, width: string, height: string) => {
+    setFlexWidth((currentValues) =>
+      currentValues.map((val, i) => (i === index ? width : val))
+    );
+    setFlexHeight((currentValues) =>
+      currentValues.map((val, i) => (i === index ? height : val))
+    );
+  };
+
   return (
     <div className="App">
       <h1>YouTube Sync Viewer</h1>
@@ -158,11 +173,24 @@ function App() {
             ) : (
               <>
                 <RemoveVideo index={index} onRemoveVideo={handleRemoveVideo} />
-                <YouTubePlayer
-                  id={id}
-                  playing={playing}
-                  ref={(el) => (playerRefs.current[index] = el)}
-                />
+                <Resizable
+                  defaultSize={{
+                    width: 560,
+                    height: 315,
+                  }}
+                  style={{ background: "#aaa" }}
+                  onResize={(_e, _d, el) => {
+                    handleResizeVideo(index, el.style.width, el.style.height);
+                  }}
+                >
+                  <YouTubePlayer
+                    id={id}
+                    playing={playing}
+                    width={flexWidth[index]}
+                    height={flexHeight[index]}
+                    ref={(el) => (playerRefs.current[index] = el)}
+                  />
+                </Resizable>
               </>
             )}
           </li>

@@ -52,8 +52,6 @@
 .playerItem {
     display: flex;
     gap: 8px;
-    width: 615px;
-    height: 315px;
 }
 
 .playerItem:nth-of-type(even) {
