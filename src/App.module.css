@@ -1,14 +1,10 @@
+/* input関連 */
 .inputContainer {
     display: flex;
     justify-content: center;
     gap: 8px;
     padding: 8px;
     height: 48px;
-}
-
-.urlTextInput {
-    width: 400px;
-    padding: 8px;
 }
 
 .numberInput {
@@ -30,13 +26,9 @@
     appearance: textfield;
 }
 
-.addButton {
-    border: 1px solid #aaaaaa;
-}
-
-.jumpButton {
-    border: 1px solid #aaaaaa;
-    width: 140px;
+.urlTextInput {
+    width: 400px;
+    padding: 8px;
 }
 
 .playAllButton {
@@ -45,13 +37,13 @@
     align-items: center;
     gap: 8px;
     width: 240px;
-    border: 1px solid #aaaaaa;
 }
 
+/* 動画プレーヤー */
 .playerContainer {
-    display: flex; /* 動画を横に並べる */
-    flex-wrap: wrap; /* 画面幅で折り返す */
-    gap: 16px; /* 動画間のスペース */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
     justify-content: center;
     margin-top: 16px;
     padding: 8px;

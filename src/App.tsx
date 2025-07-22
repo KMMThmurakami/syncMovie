@@ -124,9 +124,7 @@ function App() {
           defaultValue={0}
           placeholder="秒数を入力..."
         />
-        <button onClick={handleJumpSeek} className={styles.jumpButton}>
-          秒にジャンプ
-        </button>
+        <button onClick={handleJumpSeek}>秒にジャンプ</button>
       </div>
 
       <ul className={styles.playerContainer}>
@@ -153,7 +151,6 @@ function App() {
                 />
                 <button
                   onClick={() => handleAddVideo(index, inputValues[index])}
-                  className={styles.addButton}
                 >
                   追加
                 </button>
