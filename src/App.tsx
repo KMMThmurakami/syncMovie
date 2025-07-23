@@ -5,7 +5,9 @@ import YouTubePlayer from "./components/YouTubePlayer";
 import { isValidYouTubeId } from "./utils/youtube";
 import RemoveVideo from "./components/RemoveVideo";
 import { FaPlay, FaPause } from "react-icons/fa";
+import { IoMoveSharp } from "react-icons/io5";
 import { Resizable } from "re-resizable";
+import Draggable from "react-draggable";
 
 function App() {
   // 入力中のURLを管理するstate
@@ -27,6 +29,9 @@ function App() {
   // シーク関連
   const [seek, setSeek] = useState(0);
   const playerRefs = useRef<(HTMLVideoElement | null)[]>([]);
+
+  // ドラッグ関連
+  const draggableRef = useRef(null);
 
   // const handleSeekMouseUp = (event: React.SyntheticEvent<HTMLInputElement>) => {
   //   const inputTarget = event.target as HTMLInputElement;
@@ -147,7 +152,9 @@ function App() {
           <li
             key={`${id}_${index}`}
             className={
-              id === "" || id === null ? styles.playerNoLoad : styles.playerItem
+              id === "" || id === null
+                ? styles.playerNoLoad
+                : styles.playerItemWrap
             }
           >
             {id === "" || id === null ? (
@@ -171,27 +178,36 @@ function App() {
                 </button>
               </div>
             ) : (
-              <>
-                <RemoveVideo index={index} onRemoveVideo={handleRemoveVideo} />
-                <Resizable
-                  defaultSize={{
-                    width: 560,
-                    height: 315,
-                  }}
-                  style={{ background: "#aaa" }}
-                  onResize={(_e, _d, el) => {
-                    handleResizeVideo(index, el.style.width, el.style.height);
-                  }}
-                >
-                  <YouTubePlayer
-                    id={id}
-                    playing={playing}
-                    width={flexWidth[index]}
-                    height={flexHeight[index]}
-                    ref={(el) => (playerRefs.current[index] = el)}
-                  />
-                </Resizable>
-              </>
+              <Draggable nodeRef={draggableRef} handle=".drag-handle">
+                <div ref={draggableRef} className={styles.playerItem}>
+                  <div className={styles.movieSubMenu}>
+                    <div className={`drag-handle ${styles.moveButton}`}>
+                      <IoMoveSharp />
+                    </div>
+                    <RemoveVideo
+                      index={index}
+                      onRemoveVideo={handleRemoveVideo}
+                    />
+                  </div>
+                  <Resizable
+                    defaultSize={{
+                      width: 560,
+                      height: 315,
+                    }}
+                    onResize={(_e, _d, el) => {
+                      handleResizeVideo(index, el.style.width, el.style.height);
+                    }}
+                  >
+                    <YouTubePlayer
+                      id={id}
+                      playing={playing}
+                      width={flexWidth[index]}
+                      height={flexHeight[index]}
+                      ref={(el) => (playerRefs.current[index] = el)}
+                    />
+                  </Resizable>
+                </div>
+              </Draggable>
             )}
           </li>
         ))}

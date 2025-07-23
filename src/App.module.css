@@ -21,7 +21,7 @@
 }
 
 /* Firefoxで数値入力の矢印を非表示にする */
-.numberInput[type=number] {
+.numberInput[type="number"] {
     -moz-appearance: textfield;
     appearance: textfield;
 }
@@ -43,10 +43,14 @@
 .playerContainer {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
+    /* gap: 16px; */
     justify-content: center;
     margin-top: 16px;
     padding: 8px;
+}
+
+.playerItemWrap {
+    display: block;
 }
 
 .playerItem {
@@ -54,7 +58,7 @@
     gap: 8px;
 }
 
-.playerItem:nth-of-type(even) {
+.playerItemWrap:nth-of-type(even) .playerItem {
     flex-direction: row-reverse;
 }
 
@@ -66,4 +70,32 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    border-left: 1px solid #ffffff;
+    border-right: 1px solid #ffffff;
+}
+
+.movieSubMenu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.moveButton {
+    width: 24px;
+    height: 24px;
+    padding: 8px;
+    background-color: #ffffff;
+    color: #0070e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    border: 1px solid #0070e0;
+}
+
+.moveButton:hover {
+    opacity: 0.7;
+    background-color: #0070E0;
+    color: #ffffff;
+    cursor: move;
 }
