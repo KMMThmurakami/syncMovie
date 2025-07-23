@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, createRef } from "react";
 import "./App.css";
 import styles from "./App.module.css";
 import YouTubePlayer from "./components/YouTubePlayer";
@@ -31,7 +31,9 @@ function App() {
   const playerRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
   // ドラッグ関連
-  const draggableRef = useRef(null);
+  const nodeRefs = useRef<{ [key: number]: React.RefObject<HTMLDivElement> }>(
+    {}
+  );
 
   // const handleSeekMouseUp = (event: React.SyntheticEvent<HTMLInputElement>) => {
   //   const inputTarget = event.target as HTMLInputElement;
@@ -98,6 +100,7 @@ function App() {
       currentIds.map((id, i) => (i === indexToRemove ? "" : id))
     );
     playerRefs.current.splice(indexToRemove, 1);
+    delete nodeRefs.current[indexToRemove];
   };
 
   // 対応する入力欄の値を更新する関数
@@ -148,69 +151,81 @@ function App() {
       </div>
 
       <ul className={styles.playerContainer}>
-        {videoIds.map((id, index) => (
-          <li
-            key={`${id}_${index}`}
-            className={
-              id === "" || id === null
-                ? styles.playerNoLoad
-                : styles.playerItemWrap
-            }
-          >
-            {id === "" || id === null ? (
-              <div className={styles.inputContainer}>
-                <input
-                  name="videoSrc"
-                  className={styles.urlTextInput}
-                  type="text"
-                  placeholder="YouTube動画のURLを貼り付け"
-                  value={inputValues[index]}
-                  onChange={(e) => handleInputChange(index, e.target.value)}
-                  onKeyDown={(e) =>
-                    e.key === "Enter" &&
-                    handleAddVideo(index, inputValues[index])
-                  }
-                />
-                <button
-                  onClick={() => handleAddVideo(index, inputValues[index])}
-                >
-                  追加
-                </button>
-              </div>
-            ) : (
-              <Draggable nodeRef={draggableRef} handle=".drag-handle">
-                <div ref={draggableRef} className={styles.playerItem}>
-                  <div className={styles.movieSubMenu}>
-                    <div className={`drag-handle ${styles.moveButton}`}>
-                      <IoMoveSharp />
-                    </div>
-                    <RemoveVideo
-                      index={index}
-                      onRemoveVideo={handleRemoveVideo}
-                    />
-                  </div>
-                  <Resizable
-                    defaultSize={{
-                      width: 560,
-                      height: 315,
-                    }}
-                    onResize={(_e, _d, el) => {
-                      handleResizeVideo(index, el.style.width, el.style.height);
-                    }}
+        {videoIds.map((id, index) => {
+          if (!nodeRefs.current[index]) {
+            nodeRefs.current[index] =
+              createRef() as React.RefObject<HTMLDivElement>;
+          }
+          const nodeRef = nodeRefs.current[index];
+
+          return (
+            <li
+              key={`${id}_${index}`}
+              className={
+                id === "" || id === null
+                  ? styles.playerNoLoad
+                  : styles.playerItemWrap
+              }
+            >
+              {id === "" || id === null ? (
+                <div className={styles.inputContainer}>
+                  <input
+                    name="videoSrc"
+                    className={styles.urlTextInput}
+                    type="text"
+                    placeholder="YouTube動画のURLを貼り付け"
+                    value={inputValues[index]}
+                    onChange={(e) => handleInputChange(index, e.target.value)}
+                    onKeyDown={(e) =>
+                      e.key === "Enter" &&
+                      handleAddVideo(index, inputValues[index])
+                    }
+                  />
+                  <button
+                    onClick={() => handleAddVideo(index, inputValues[index])}
                   >
-                    <YouTubePlayer
-                      id={id}
-                      playing={playing}
-                      width={flexWidth[index]}
-                      height={flexHeight[index]}
-                      ref={(el) => (playerRefs.current[index] = el)}
-                    />
-                  </Resizable>
+                    追加
+                  </button>
                 </div>
-              </Draggable>
-            )}
-          </li>
-        ))}
+              ) : (
+                <Draggable nodeRef={nodeRef} handle=".drag-handle">
+                  <div ref={nodeRef} className={styles.playerItem}>
+                    <div className={styles.movieSubMenu}>
+                      <div className={`drag-handle ${styles.moveButton}`}>
+                        <IoMoveSharp />
+                      </div>
+                      <RemoveVideo
+                        index={index}
+                        onRemoveVideo={handleRemoveVideo}
+                      />
+                    </div>
+                    <Resizable
+                      defaultSize={{
+                        width: 560,
+                        height: 315,
+                      }}
+                      onResize={(_e, _d, el) => {
+                        handleResizeVideo(
+                          index,
+                          el.style.width,
+                          el.style.height
+                        );
+                      }}
+                    >
+                      <YouTubePlayer
+                        id={id}
+                        playing={playing}
+                        width={flexWidth[index]}
+                        height={flexHeight[index]}
+                        ref={(el) => (playerRefs.current[index] = el)}
+                      />
+                    </Resizable>
+                  </div>
+                </Draggable>
+              )}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
