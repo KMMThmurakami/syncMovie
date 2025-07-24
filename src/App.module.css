@@ -95,7 +95,7 @@
 
 .moveButton:hover {
     opacity: 0.7;
-    background-color: #0070E0;
+    background-color: #0070e0;
     color: #ffffff;
     cursor: move;
 }

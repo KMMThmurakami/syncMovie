@@ -188,7 +188,11 @@ function App() {
                   </button>
                 </div>
               ) : (
-                <Draggable nodeRef={nodeRef} handle=".drag-handle">
+                <Draggable
+                  nodeRef={nodeRef}
+                  handle=".drag-handle"
+                  bounds="body"
+                >
                   <div ref={nodeRef} className={styles.playerItem}>
                     <div className={styles.movieSubMenu}>
                       <div className={`drag-handle ${styles.moveButton}`}>
