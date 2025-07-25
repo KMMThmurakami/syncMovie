@@ -15,7 +15,7 @@ import {
 } from "media-chrome/react";
 
 interface YouTubePlayerProps {
-  id: string;
+  src: string;
   playing: boolean;
   width: string;
   height: string;
@@ -24,13 +24,13 @@ interface YouTubePlayerProps {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 const YouTubePlayer = forwardRef<ReactPlayer, YouTubePlayerProps>(
-  ({ id, playing, width, height }, ref) => {
+  ({ src, playing, width, height }, ref) => {
     return (
       <MediaController>
         <ReactPlayer
           ref={ref} // 受け取ったrefをReactPlayerに渡す
           slot="media"
-          src={`https://www.youtube.com/watch?v=${id}`}
+          src={src}
           width={width}
           height={height}
           playing={playing}

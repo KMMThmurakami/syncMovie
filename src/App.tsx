@@ -2,7 +2,7 @@ import { useState, useRef, createRef } from "react";
 import "./App.css";
 import styles from "./App.module.css";
 import YouTubePlayer from "./components/YouTubePlayer";
-import { isValidYouTubeId } from "./utils/youtube";
+import { isValidYouTubeUrl } from "./utils/youtube";
 import RemoveVideo from "./components/RemoveVideo";
 import { FaPlay, FaPause } from "react-icons/fa";
 import { IoMoveSharp } from "react-icons/io5";
@@ -13,7 +13,7 @@ function App() {
   // 入力中のURLを管理するstate
   const [inputValues, setInputValues] = useState<string[]>(["", ""]);
   // 表示する動画IDの「リスト」を管理するstate
-  const [videoIds, setVideoIds] = useState<string[]>(["", ""]);
+  const [videoUrls, setVideoUrls] = useState<string[]>(["", ""]);
   // 全ての動画の再生状態を管理するstate
   const [playing, setPlaying] = useState(false);
 
@@ -59,9 +59,9 @@ function App() {
     });
   };
 
-  const updateVideoId = (index: number, newId: string) => {
-    setVideoIds((currentIds) =>
-      currentIds.map((id, i) => (i === index ? newId : id))
+  const updateVideoUrl = (index: number, newUrl: string) => {
+    setVideoUrls((currentIds) =>
+      currentIds.map((url, i) => (i === index ? newUrl : url))
     );
   };
 
@@ -72,18 +72,19 @@ function App() {
 
     try {
       const urlObject = new URL(url);
-      const id = urlObject.searchParams.get("v");
+      const src = urlObject.href;
+      const hostname = urlObject.hostname;
 
-      if (id) {
-        const isValid = await isValidYouTubeId(id);
+      if (hostname === "www.youtube.com") {
+        const isValid = await isValidYouTubeUrl(urlObject);
 
         if (isValid) {
-          updateVideoId(index, id);
+          updateVideoUrl(index, src);
           setInputValues((currentValues) =>
             currentValues.map((val, i) => (i === index ? "" : val))
           );
         } else {
-          alert("存在しない、または非公開の動画IDです。");
+          alert("存在しない、または非公開のYouTube動画IDです。");
         }
       } else {
         alert("有効なYouTubeのURLではありません。");
@@ -96,8 +97,8 @@ function App() {
 
   // インデックスを指定して動画を削除する関数
   const handleRemoveVideo = (indexToRemove: number) => {
-    setVideoIds((currentIds) =>
-      currentIds.map((id, i) => (i === indexToRemove ? "" : id))
+    setVideoUrls((currentIds) =>
+      currentIds.map((url, i) => (i === indexToRemove ? "" : url))
     );
     playerRefs.current.splice(indexToRemove, 1);
     delete nodeRefs.current[indexToRemove];
@@ -151,7 +152,7 @@ function App() {
       </div>
 
       <ul className={styles.playerContainer}>
-        {videoIds.map((id, index) => {
+        {videoUrls.map((url, index) => {
           if (!nodeRefs.current[index]) {
             nodeRefs.current[index] =
               createRef() as React.RefObject<HTMLDivElement>;
@@ -160,14 +161,14 @@ function App() {
 
           return (
             <li
-              key={`${id}_${index}`}
+              key={`video_${index}`}
               className={
-                id === "" || id === null
+                url === "" || url === null
                   ? styles.playerNoLoad
                   : styles.playerItemWrap
               }
             >
-              {id === "" || id === null ? (
+              {url === "" || url === null ? (
                 <div className={styles.inputContainer}>
                   <input
                     name="videoSrc"
@@ -217,7 +218,7 @@ function App() {
                       }}
                     >
                       <YouTubePlayer
-                        id={id}
+                        src={url}
                         playing={playing}
                         width={flexWidth[index]}
                         height={flexHeight[index]}
