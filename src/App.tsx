@@ -2,12 +2,12 @@ import { useState, useRef, createRef } from "react";
 import "./App.css";
 import styles from "./App.module.css";
 import YouTubePlayer from "./components/YouTubePlayer";
-import { isValidYouTubeUrl } from "./utils/youtube";
 import RemoveVideo from "./components/RemoveVideo";
 import { FaPlay, FaPause } from "react-icons/fa";
 import { IoMoveSharp } from "react-icons/io5";
 import { Resizable } from "re-resizable";
 import Draggable from "react-draggable";
+import ReactPlayer from "react-player";
 
 function App() {
   // 入力中のURLを管理するstate
@@ -76,7 +76,9 @@ function App() {
       const hostname = urlObject.hostname;
 
       if (hostname === "www.youtube.com") {
-        const isValid = await isValidYouTubeUrl(urlObject);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        const isValid = ReactPlayer.canPlay(src);
 
         if (isValid) {
           updateVideoUrl(index, src);
