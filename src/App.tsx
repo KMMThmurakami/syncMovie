@@ -12,7 +12,7 @@ import Draggable from "react-draggable";
 function App() {
   // 入力中のURLを管理するstate
   const [inputValues, setInputValues] = useState<string[]>(["", ""]);
-  // 表示する動画IDの「リスト」を管理するstate
+  // 表示する動画の「リスト」を管理するstate
   const [videoUrls, setVideoUrls] = useState<string[]>(["", ""]);
   // 全ての動画の再生状態を管理するstate
   const [playing, setPlaying] = useState(false);
@@ -97,6 +97,9 @@ function App() {
 
   // インデックスを指定して動画を削除する関数
   const handleRemoveVideo = (indexToRemove: number) => {
+    if (!videoUrls[indexToRemove].includes("www.youtube.com")) {
+      URL.revokeObjectURL(videoUrls[indexToRemove]);
+    }
     setVideoUrls((currentIds) =>
       currentIds.map((url, i) => (i === indexToRemove ? "" : url))
     );
@@ -121,9 +124,29 @@ function App() {
     );
   };
 
+  // ファイルが選択されたときに呼ばれる関数
+  const handleFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    if (!event.target.files) return;
+    const file = event.target.files[0];
+    if (file) {
+      // 既存のURLがあれば解放する
+      videoUrls.map((url) => {
+        if (url && !url.includes("www.youtube.com")) {
+          URL.revokeObjectURL(url);
+        }
+      });
+      // 新しいURLを生成してstateにセット
+      const src = URL.createObjectURL(file);
+      updateVideoUrl(index, src);
+    }
+  };
+
   return (
     <div className="App">
-      <h1>YouTube Sync Viewer</h1>
+      <h1>Video Sync Viewer</h1>
       <div className={`${styles.inputContainer}`}>
         {playing && (
           <button className={styles.playAllButton} onClick={handlePauseAll}>
@@ -169,24 +192,44 @@ function App() {
               }
             >
               {url === "" || url === null ? (
-                <div className={styles.inputContainer}>
-                  <input
-                    name="videoSrc"
-                    className={styles.urlTextInput}
-                    type="text"
-                    placeholder="YouTube動画のURLを貼り付け"
-                    value={inputValues[index]}
-                    onChange={(e) => handleInputChange(index, e.target.value)}
-                    onKeyDown={(e) =>
-                      e.key === "Enter" &&
-                      handleAddVideo(index, inputValues[index])
-                    }
-                  />
-                  <button
-                    onClick={() => handleAddVideo(index, inputValues[index])}
-                  >
-                    追加
-                  </button>
+                <div className={styles.inputContainerMovie}>
+                  <div className={styles.inputContainer}>
+                    <input
+                      name="videoSrc"
+                      className={styles.urlTextInput}
+                      type="text"
+                      placeholder="YouTube動画のURLを貼り付け"
+                      value={inputValues[index]}
+                      onChange={(e) => handleInputChange(index, e.target.value)}
+                      onKeyDown={(e) =>
+                        e.key === "Enter" &&
+                        handleAddVideo(index, inputValues[index])
+                      }
+                    />
+                    <button
+                      onClick={() => handleAddVideo(index, inputValues[index])}
+                    >
+                      追加
+                    </button>
+                  </div>
+                  {/* <input
+                    type="file"
+                    accept="video/*"
+                    onChange={(event) => handleFileChange(event, index)}
+                  /> */}
+                  <div className={styles.fileInputContainer}>
+                    <input
+                      type="file"
+                      id="custom-file-input"
+                      onChange={(event) => handleFileChange(event, index)}
+                    />
+                    <label
+                      className={styles.fileInputLabel}
+                      htmlFor="custom-file-input"
+                    >
+                      端末からファイルを選ぶ
+                    </label>
+                  </div>
                 </div>
               ) : (
                 <Draggable
