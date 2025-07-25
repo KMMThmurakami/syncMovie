@@ -35,19 +35,6 @@ function App() {
     {}
   );
 
-  // const handleSeekMouseUp = (event: React.SyntheticEvent<HTMLInputElement>) => {
-  //   const inputTarget = event.target as HTMLInputElement;
-  //   const seekTimeFraction = Number(inputTarget.value);
-  //   console.log(seekTimeFraction);
-
-  //   playerRefs.current.forEach((player) => {
-  //     // playerが存在し、動画の長さ(duration)が取得できている場合のみ実行
-  //     if (player && player.duration) {
-  //       player.currentTime = seekTimeFraction * player.duration;
-  //     }
-  //   });
-  // };
-
   const handleJumpSeek = () => {
     const seekTimeFraction = seek;
 
@@ -214,11 +201,6 @@ function App() {
                       追加
                     </button>
                   </div>
-                  {/* <input
-                    type="file"
-                    accept="video/*"
-                    onChange={(event) => handleFileChange(event, index)}
-                  /> */}
                   <div className={styles.fileInputContainer}>
                     <input
                       type="file"
