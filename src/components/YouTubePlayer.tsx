@@ -14,7 +14,6 @@ const YouTubePlayer = forwardRef<ReactPlayer, YouTubePlayerProps>(
   ({ src, playing, width, height }, ref) => {
     return (
       <ReactPlayer
-        className={"drag-handle"}
         style={{ backgroundColor: "#eeeeee" }}
         ref={ref} // 受け取ったrefをReactPlayerに渡す
         src={src}
