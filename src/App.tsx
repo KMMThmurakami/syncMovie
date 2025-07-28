@@ -121,12 +121,11 @@ function App() {
     if (!event.target.files) return;
     const file = event.target.files[0];
     if (file) {
-      // 既存のURLがあれば解放する
-      videoUrls.map((url) => {
-        if (url && !url.includes("www.youtube.com")) {
-          URL.revokeObjectURL(url);
-        }
-      });
+      // もし同じスロットに既にローカル動画があれば、古いURLを解放する
+      const oldUrl = videoUrls[index];
+      if (oldUrl && !oldUrl.includes("youtube.com")) {
+        URL.revokeObjectURL(oldUrl);
+      }
       // 新しいURLを生成してstateにセット
       const src = URL.createObjectURL(file);
       updateVideoUrl(index, src);
@@ -214,12 +213,12 @@ function App() {
                   <div className={styles.fileInputContainer}>
                     <input
                       type="file"
-                      id="custom-file-input"
+                      id={`custom-file-input-${index}`}
                       onChange={(event) => handleFileChange(event, index)}
                     />
                     <label
                       className={styles.fileInputLabel}
-                      htmlFor="custom-file-input"
+                      htmlFor={`custom-file-input-${index}`}
                     >
                       端末からファイルを選ぶ
                     </label>
