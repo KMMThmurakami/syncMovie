@@ -14,8 +14,8 @@ const YouTubePlayer = forwardRef<ReactPlayer, YouTubePlayerProps>(
   ({ src, playing, width, height }, ref) => {
     return (
       <ReactPlayer
+        style={{ backgroundColor: "#ffffff" }}
         ref={ref} // 受け取ったrefをReactPlayerに渡す
-        slot="media"
         src={src}
         width={width}
         height={height}

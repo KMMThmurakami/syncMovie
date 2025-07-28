@@ -5,6 +5,7 @@ import YouTubePlayer from "./components/YouTubePlayer";
 import RemoveVideo from "./components/RemoveVideo";
 import { FaPlay, FaPause } from "react-icons/fa";
 import { IoMoveSharp } from "react-icons/io5";
+import { RiBringToFront } from "react-icons/ri";
 import { Resizable } from "re-resizable";
 import Draggable from "react-draggable";
 import ReactPlayer from "react-player";
@@ -34,6 +35,15 @@ function App() {
   const nodeRefs = useRef<{ [key: number]: React.RefObject<HTMLDivElement> }>(
     {}
   );
+
+  // z-index
+  const [front, setFront] = useState<boolean[]>([true, false]);
+
+  const toggleFrontClass = (index: number) => {
+    setFront((currentValues) =>
+      currentValues.map((_, i) => (i === index ? true : false))
+    );
+  };
 
   const handleJumpSeek = () => {
     const seekTimeFraction = seek;
@@ -230,14 +240,30 @@ function App() {
                   handle=".drag-handle"
                   bounds="body"
                 >
-                  <div ref={nodeRef} className={styles.playerItem}>
+                  <div
+                    ref={nodeRef}
+                    className={
+                      front[index]
+                        ? `${styles.playerItem} ${styles.front}`
+                        : `${styles.playerItem}`
+                    }
+                  >
                     <div className={styles.movieSubMenu}>
-                      <div className={`drag-handle ${styles.moveButton}`}>
+                      <div className={`drag-handle ${styles.videoMenuButton}`}>
                         <IoMoveSharp />
+                      </div>
+                      <div
+                        className={styles.videoMenuButton}
+                        onClick={() => {
+                          toggleFrontClass(index);
+                        }}
+                      >
+                        <RiBringToFront />
                       </div>
                       <RemoveVideo
                         index={index}
                         onRemoveVideo={handleRemoveVideo}
+                        handleResizeVideo={handleResizeVideo}
                       />
                     </div>
                     <Resizable
