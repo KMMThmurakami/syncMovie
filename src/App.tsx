@@ -7,7 +7,7 @@ import { FaPlay, FaPause } from "react-icons/fa";
 import { IoMoveSharp } from "react-icons/io5";
 import { RiBringToFront } from "react-icons/ri";
 import { Resizable } from "re-resizable";
-import Draggable from "react-draggable";
+import Draggable, { type DraggableData } from "react-draggable";
 import ReactPlayer from "react-player";
 
 function App() {
@@ -32,6 +32,10 @@ function App() {
   const playerRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
   // ドラッグ関連
+  const [position, setPosition] = useState([
+    { x: 0, y: 0 },
+    { x: 0, y: 0 },
+  ]);
   const nodeRefs = useRef<{ [key: number]: React.RefObject<HTMLDivElement> }>(
     {}
   );
@@ -102,6 +106,11 @@ function App() {
     setVideoUrls((currentIds) =>
       currentIds.map((url, i) => (i === indexToRemove ? "" : url))
     );
+    setPosition((currentValues) =>
+      currentValues.map((val, i) =>
+        i === indexToRemove ? { x: 0, y: 0 } : val
+      )
+    );
     playerRefs.current.splice(indexToRemove, 1);
     delete nodeRefs.current[indexToRemove];
   };
@@ -123,6 +132,17 @@ function App() {
     );
   };
 
+  // 動画リサイズ終了
+  const handleResizeStop = (index: number, pos: DOMRect) => {
+    // 表示位置を調整
+    const newPosition = position[index];
+    if (pos.left < 0) newPosition.x = newPosition.x + pos.left * -1;
+    if (pos.top < 0) newPosition.y = newPosition.y + pos.top * -1;
+    setPosition((currentValues) =>
+      currentValues.map((val, i) => (i === index ? newPosition : val))
+    );
+  };
+
   // ファイルが選択されたときに呼ばれる関数
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -140,6 +160,14 @@ function App() {
       const src = URL.createObjectURL(file);
       updateVideoUrl(index, src);
     }
+  };
+
+  // ドラッグ位置更新
+  const handleDragStop = (index: number, data: DraggableData) => {
+    const newPosition = { x: data.x, y: data.y };
+    setPosition((currentValues) =>
+      currentValues.map((val, i) => (i === index ? newPosition : val))
+    );
   };
 
   return (
@@ -239,6 +267,8 @@ function App() {
                   nodeRef={nodeRef}
                   handle=".drag-handle"
                   bounds="body"
+                  position={position[index]}
+                  onStop={(_e, data) => handleDragStop(index, data)}
                 >
                   <div
                     ref={nodeRef}
@@ -271,12 +301,18 @@ function App() {
                         width: 560,
                         height: 315,
                       }}
+                      maxWidth={screen.width}
+                      maxHeight={screen.height}
                       onResize={(_e, _d, el) => {
                         handleResizeVideo(
                           index,
                           el.style.width,
                           el.style.height
                         );
+                      }}
+                      onResizeStop={(_e, _d, el) => {
+                        const pos = el.getBoundingClientRect();
+                        handleResizeStop(index, pos);
                       }}
                     >
                       <YouTubePlayer
