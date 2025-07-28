@@ -11,55 +11,47 @@ import Draggable, { type DraggableData } from "react-draggable";
 import ReactPlayer from "react-player";
 
 function App() {
-  // 入力中のURLを管理するstate
-  const [inputValues, setInputValues] = useState<string[]>(["", ""]);
-  // 表示する動画の「リスト」を管理するstate
-  const [videoUrls, setVideoUrls] = useState<string[]>(["", ""]);
   // 全ての動画の再生状態を管理するstate
   const [playing, setPlaying] = useState(false);
-
-  // 再生状態をtrueにする関数
-  const handlePlayAll = () => setPlaying(true);
-  // 再生状態をfalseにする関数
-  const handlePauseAll = () => setPlaying(false);
-
+  // 入力中のURLを管理するstate
+  const [inputValues, setInputValues] = useState<string[]>(["", ""]);
+  // 表示する動画のリストを管理するstate
+  const [videoUrls, setVideoUrls] = useState<string[]>(["", ""]);
   // 動画ウィンドウサイズ
-  const [flexWidth, setFlexWidth] = useState<string[]>(["560px", "560px"]);
-  const [flexHeight, setFlexHeight] = useState<string[]>(["315px", "315px"]);
-
-  // シーク関連
-  const [seek, setSeek] = useState(0);
-  const playerRefs = useRef<(HTMLVideoElement | null)[]>([]);
-
+  const [windowSize, setWindowSize] = useState([
+    { width: "560px", height: "315px" },
+    { width: "560px", height: "315px" },
+  ]);
   // ドラッグ関連
   const [position, setPosition] = useState([
     { x: 0, y: 0 },
     { x: 0, y: 0 },
   ]);
+  // シーク関連
+  const [seek, setSeek] = useState(0);
+  // 最前面に表示
+  const [front, setFront] = useState<boolean[]>([true, false]);
+
+  // シーク関連のRef
+  const playerRefs = useRef<(HTMLVideoElement | null)[]>([]);
+  // ドラッグ関連のRef
   const nodeRefs = useRef<{ [key: number]: React.RefObject<HTMLDivElement> }>(
     {}
   );
 
-  // z-index
-  const [front, setFront] = useState<boolean[]>([true, false]);
+  // ----------------------------------------------------------
+  // 再生状態の切り替え
+  const handlePlayAll = () => setPlaying(true);
+  const handlePauseAll = () => setPlaying(false);
 
-  const toggleFrontClass = (index: number) => {
-    setFront((currentValues) =>
-      currentValues.map((_, i) => (i === index ? true : false))
+  // 対応する入力欄の値を更新する関数
+  const handleInputChange = (index: number, value: string) => {
+    setInputValues((currentValues) =>
+      currentValues.map((val, i) => (i === index ? value : val))
     );
   };
 
-  const handleJumpSeek = () => {
-    const seekTimeFraction = seek;
-
-    playerRefs.current.forEach((player) => {
-      // playerが存在し、動画の長さ(duration)が取得できている場合のみ実行
-      if (player && player.duration) {
-        player.currentTime = seekTimeFraction;
-      }
-    });
-  };
-
+  // 読み込み動画リスト更新
   const updateVideoUrl = (index: number, newUrl: string) => {
     setVideoUrls((currentIds) =>
       currentIds.map((url, i) => (i === index ? newUrl : url))
@@ -98,51 +90,6 @@ function App() {
     }
   };
 
-  // インデックスを指定して動画を削除する関数
-  const handleRemoveVideo = (indexToRemove: number) => {
-    if (!videoUrls[indexToRemove].includes("www.youtube.com")) {
-      URL.revokeObjectURL(videoUrls[indexToRemove]);
-    }
-    setVideoUrls((currentIds) =>
-      currentIds.map((url, i) => (i === indexToRemove ? "" : url))
-    );
-    setPosition((currentValues) =>
-      currentValues.map((val, i) =>
-        i === indexToRemove ? { x: 0, y: 0 } : val
-      )
-    );
-    playerRefs.current.splice(indexToRemove, 1);
-    delete nodeRefs.current[indexToRemove];
-  };
-
-  // 対応する入力欄の値を更新する関数
-  const handleInputChange = (index: number, value: string) => {
-    setInputValues((currentValues) =>
-      currentValues.map((val, i) => (i === index ? value : val))
-    );
-  };
-
-  // 動画リサイズ
-  const handleResizeVideo = (index: number, width: string, height: string) => {
-    setFlexWidth((currentValues) =>
-      currentValues.map((val, i) => (i === index ? width : val))
-    );
-    setFlexHeight((currentValues) =>
-      currentValues.map((val, i) => (i === index ? height : val))
-    );
-  };
-
-  // 動画リサイズ終了
-  const handleResizeStop = (index: number, pos: DOMRect) => {
-    // 表示位置を調整
-    const newPosition = position[index];
-    if (pos.left < 0) newPosition.x = newPosition.x + pos.left * -1;
-    if (pos.top < 0) newPosition.y = newPosition.y + pos.top * -1;
-    setPosition((currentValues) =>
-      currentValues.map((val, i) => (i === index ? newPosition : val))
-    );
-  };
-
   // ファイルが選択されたときに呼ばれる関数
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -162,11 +109,64 @@ function App() {
     }
   };
 
+  // インデックスを指定して動画を削除する関数
+  const handleRemoveVideo = (indexToRemove: number) => {
+    if (!videoUrls[indexToRemove].includes("www.youtube.com")) {
+      URL.revokeObjectURL(videoUrls[indexToRemove]);
+    }
+    setVideoUrls((currentIds) =>
+      currentIds.map((url, i) => (i === indexToRemove ? "" : url))
+    );
+    setPosition((currentValues) =>
+      currentValues.map((val, i) =>
+        i === indexToRemove ? { x: 0, y: 0 } : val
+      )
+    );
+    playerRefs.current.splice(indexToRemove, 1);
+    delete nodeRefs.current[indexToRemove];
+  };
+
+  // 動画リサイズ
+  const handleResizeVideo = (index: number, width: string, height: string) => {
+    setWindowSize((currentValues) =>
+      currentValues.map((val, i) => (i === index ? { width, height } : val))
+    );
+  };
+
+  // 動画リサイズ終了
+  const handleResizeStop = (index: number, pos: DOMRect) => {
+    // 表示位置を調整
+    const newPosition = position[index];
+    if (pos.left < 0) newPosition.x = newPosition.x + pos.left * -1;
+    if (pos.top < 0) newPosition.y = newPosition.y + pos.top * -1;
+    setPosition((currentValues) =>
+      currentValues.map((val, i) => (i === index ? newPosition : val))
+    );
+  };
+
+  // シーク操作
+  const handleJumpSeek = () => {
+    const seekTimeFraction = seek;
+    playerRefs.current.forEach((player) => {
+      // playerが存在し、動画の長さ(duration)が取得できている場合のみ実行
+      if (player && player.duration) {
+        player.currentTime = seekTimeFraction;
+      }
+    });
+  };
+
   // ドラッグ位置更新
   const handleDragStop = (index: number, data: DraggableData) => {
     const newPosition = { x: data.x, y: data.y };
     setPosition((currentValues) =>
       currentValues.map((val, i) => (i === index ? newPosition : val))
+    );
+  };
+
+  // 最前面に表示
+  const toggleFrontClass = (index: number) => {
+    setFront((currentValues) =>
+      currentValues.map((_, i) => (i === index ? true : false))
     );
   };
 
@@ -318,8 +318,8 @@ function App() {
                       <YouTubePlayer
                         src={url}
                         playing={playing}
-                        width={flexWidth[index]}
-                        height={flexHeight[index]}
+                        width={windowSize[index].width}
+                        height={windowSize[index].height}
                         ref={(el) => (playerRefs.current[index] = el)}
                       />
                     </Resizable>
