@@ -182,25 +182,35 @@ function App() {
             >
               {url === "" || url === null ? (
                 <div className={styles.inputContainerMovie}>
-                  <div className={styles.inputContainer}>
-                    <input
-                      name="videoSrc"
-                      className={styles.urlTextInput}
-                      type="text"
-                      placeholder="YouTube動画のURLを貼り付け"
-                      value={inputValues[index]}
-                      onChange={(e) => handleInputChange(index, e.target.value)}
-                      onKeyDown={(e) =>
-                        e.key === "Enter" &&
-                        handleAddVideo(index, inputValues[index])
-                      }
-                    />
-                    <button
-                      onClick={() => handleAddVideo(index, inputValues[index])}
-                    >
-                      追加
-                    </button>
-                  </div>
+                  {/* YouTube動画の複数同時再生は規約違反になるため1つしか選択させない */}
+                  {index === 0 && (
+                    <>
+                      <div className={styles.inputContainer}>
+                        <input
+                          name="videoSrc"
+                          className={styles.urlTextInput}
+                          type="text"
+                          placeholder="YouTube動画のURLを貼り付け"
+                          value={inputValues[index]}
+                          onChange={(e) =>
+                            handleInputChange(index, e.target.value)
+                          }
+                          onKeyDown={(e) =>
+                            e.key === "Enter" &&
+                            handleAddVideo(index, inputValues[index])
+                          }
+                        />
+                        <button
+                          onClick={() =>
+                            handleAddVideo(index, inputValues[index])
+                          }
+                        >
+                          追加
+                        </button>
+                      </div>
+                      <p className={styles.note}>OR</p>
+                    </>
+                  )}
                   <div className={styles.fileInputContainer}>
                     <input
                       type="file"

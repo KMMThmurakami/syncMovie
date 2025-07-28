@@ -13,6 +13,10 @@
     padding: 8px;
 }
 
+.note {
+    font-weight: 700;
+}
+
 /* Chrome, Safari, Edge, Operaで数値入力の矢印を非表示にする */
 .numberInput::-webkit-outer-spin-button,
 .numberInput::-webkit-inner-spin-button {
