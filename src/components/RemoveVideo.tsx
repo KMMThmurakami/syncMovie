@@ -1,4 +1,4 @@
-import styles from "./RemoveVideo.module.css";
+import styles from "../App.module.css";
 import { RiDeleteBin2Fill } from "react-icons/ri";
 
 interface RemoveVideoProps {
