@@ -31,11 +31,6 @@
     appearance: textfield;
 }
 
-.urlTextInput {
-    width: 400px;
-    padding: 8px;
-}
-
 /* 動画プレーヤー */
 .playerContainer {
     display: flex;
@@ -177,4 +172,10 @@
     background-color: #0070e0;
     color: #ffffff;
     cursor: pointer;
+}
+
+/* InputYouTube.tsx */
+.urlTextInput {
+    width: 400px;
+    padding: 8px;
 }

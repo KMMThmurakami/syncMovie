@@ -5,6 +5,7 @@ import YouTubePlayer from "./components/YouTubePlayer";
 import RemoveVideo from "./components/RemoveVideo";
 import PlayerButton from "./components/PlayerButton";
 import SeekButton from "./components/SeekButton";
+import InputYouTube from "./components/InputYouTube";
 import { IoMoveSharp } from "react-icons/io5";
 import { RiBringToFront } from "react-icons/ri";
 import { Resizable } from "re-resizable";
@@ -60,7 +61,7 @@ function App() {
   };
 
   // 動画を追加する関数
-  const handleAddVideo = async (index: number, url: string) => {
+  const handleAddVideo = (index: number, url: string) => {
     // URLが空なら何もしない
     if (!url) return;
 
@@ -205,29 +206,12 @@ function App() {
                   {/* YouTube動画の複数同時再生は規約違反になるため1つしか選択させない */}
                   {index === 0 && (
                     <>
-                      <div className={styles.inputContainer}>
-                        <input
-                          name="videoSrc"
-                          className={styles.urlTextInput}
-                          type="text"
-                          placeholder="YouTube動画のURLを貼り付け"
-                          value={inputValues[index]}
-                          onChange={(e) =>
-                            handleInputChange(index, e.target.value)
-                          }
-                          onKeyDown={(e) =>
-                            e.key === "Enter" &&
-                            handleAddVideo(index, inputValues[index])
-                          }
-                        />
-                        <button
-                          onClick={() =>
-                            handleAddVideo(index, inputValues[index])
-                          }
-                        >
-                          追加
-                        </button>
-                      </div>
+                      <InputYouTube
+                        index={index}
+                        inputValues={inputValues}
+                        handleInputChange={handleInputChange}
+                        handleAddVideo={handleAddVideo}
+                      />
                       <p className={styles.note}>OR</p>
                     </>
                   )}
