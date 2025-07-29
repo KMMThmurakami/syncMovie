@@ -19,31 +19,38 @@ const VideoSubMenu: React.FC<VideoSubMenuProps> = ({
   return (
     <div className={styles.videoSubMenu}>
       {/* 移動ボタン */}
-      <div
-        className={`drag-handle ${styles.videoSubMenuButton} ${styles.videoSubMenuButtonMove}`}
-      >
-        <IoMoveSharp />
+      <div className={styles.tooltipContainer}>
+        <div
+          className={`drag-handle ${styles.videoSubMenuButton} ${styles.videoSubMenuButtonMove}`}
+        >
+          <IoMoveSharp />
+        </div>
+        <span className={styles.tooltipText}>移動</span>
       </div>
 
       {/* 前面へボタン */}
-      <div
-        className={styles.videoSubMenuButton}
-        onClick={() => {
-          toggleFrontClass(index);
-        }}
-      >
-        <RiBringToFront />
+      <div className={styles.tooltipContainer}>
+        <div
+          className={styles.videoSubMenuButton}
+          onClick={() => toggleFrontClass(index)}
+        >
+          <RiBringToFront />
+        </div>
+        <span className={styles.tooltipText}>最前面へ</span>
       </div>
 
       {/* 削除ボタン */}
-      <div
-        className={styles.videoSubMenuButton}
-        onClick={() => {
-          onRemoveVideo(index);
-          handleResizeVideo(index, "560px", "315px");
-        }}
-      >
-        <RiDeleteBin2Fill />
+      <div className={styles.tooltipContainer}>
+        <div
+          className={styles.videoSubMenuButton}
+          onClick={() => {
+            onRemoveVideo(index);
+            handleResizeVideo(index, "560px", "315px");
+          }}
+        >
+          <RiDeleteBin2Fill />
+        </div>
+        <span className={styles.tooltipText}>削除</span>
       </div>
     </div>
   );
