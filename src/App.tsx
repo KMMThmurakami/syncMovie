@@ -2,13 +2,11 @@ import { useState, useRef, createRef } from "react";
 import "./App.css";
 import styles from "./App.module.css";
 import YouTubePlayer from "./components/YouTubePlayer";
-import RemoveVideo from "./components/RemoveVideo";
+import VideoSubMenu from "./components/VideoSubMenu";
 import PlayerButton from "./components/PlayerButton";
 import SeekButton from "./components/SeekButton";
 import InputYouTube from "./components/InputYouTube";
 import InputFile from "./components/InputFile";
-import { IoMoveSharp } from "react-icons/io5";
-import { RiBringToFront } from "react-icons/ri";
 import { Resizable } from "re-resizable";
 import Draggable, { type DraggableData } from "react-draggable";
 import ReactPlayer from "react-player";
@@ -237,24 +235,12 @@ function App() {
                         : `${styles.playerItem}`
                     }
                   >
-                    <div className={styles.movieSubMenu}>
-                      <div className={`drag-handle ${styles.videoMenuButton}`}>
-                        <IoMoveSharp />
-                      </div>
-                      <div
-                        className={styles.videoMenuButton}
-                        onClick={() => {
-                          toggleFrontClass(index);
-                        }}
-                      >
-                        <RiBringToFront />
-                      </div>
-                      <RemoveVideo
-                        index={index}
-                        onRemoveVideo={handleRemoveVideo}
-                        handleResizeVideo={handleResizeVideo}
-                      />
-                    </div>
+                    <VideoSubMenu
+                      index={index}
+                      toggleFrontClass={toggleFrontClass}
+                      onRemoveVideo={handleRemoveVideo}
+                      handleResizeVideo={handleResizeVideo}
+                    />
                     <Resizable
                       defaultSize={{
                         width: 560,

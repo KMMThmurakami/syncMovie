@@ -80,32 +80,6 @@
     border-color: #34a853;
 }
 
-.movieSubMenu {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.videoMenuButton {
-    width: 24px;
-    height: 24px;
-    padding: 8px;
-    background-color: #ffffff;
-    color: #0070e0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    border: 1px solid #0070e0;
-}
-
-.videoMenuButton:hover {
-    opacity: 0.7;
-    background-color: #0070e0;
-    color: #ffffff;
-    cursor: move;
-}
-
 .front {
     z-index: 10;
 }
@@ -152,8 +126,14 @@
     width: 240px;
 }
 
-/* RemoveVideo.tsx */
-.playerRemoveButton {
+/* videoSubMenu.tsx */
+.videoSubMenu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.videoSubMenuButton {
     width: 24px;
     height: 24px;
     padding: 8px;
@@ -162,16 +142,19 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    line-height: 24px;
     border-radius: 50%;
     border: 1px solid #0070e0;
 }
 
-.playerRemoveButton:hover {
+.videoSubMenuButton:hover {
     opacity: 0.7;
     background-color: #0070e0;
     color: #ffffff;
     cursor: pointer;
+}
+
+.videoSubMenuButtonMove:hover {
+    cursor: move;
 }
 
 /* InputYouTube.tsx */
