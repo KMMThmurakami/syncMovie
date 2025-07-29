@@ -110,7 +110,7 @@
     z-index: 10;
 }
 
-/* ファイル選択ボタン */
+/* InputFile.tsx */
 .fileInputContainer {
     position: relative;
     display: inline-block;
@@ -127,7 +127,7 @@
     border: 0;
 }
 
-.fileInputContainer .fileInputLabel {
+.fileInputLabel {
     display: inline-block;
     padding: 12px 24px;
     color: #ffffff;
@@ -139,7 +139,7 @@
     transition: background-color 0.2s;
 }
 
-.fileInputContainer .fileInputLabel:hover {
+.fileInputLabel:hover {
     opacity: 0.7;
 }
 

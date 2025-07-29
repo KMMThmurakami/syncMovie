@@ -6,6 +6,7 @@ import RemoveVideo from "./components/RemoveVideo";
 import PlayerButton from "./components/PlayerButton";
 import SeekButton from "./components/SeekButton";
 import InputYouTube from "./components/InputYouTube";
+import InputFile from "./components/InputFile";
 import { IoMoveSharp } from "react-icons/io5";
 import { RiBringToFront } from "react-icons/ri";
 import { Resizable } from "re-resizable";
@@ -215,19 +216,10 @@ function App() {
                       <p className={styles.note}>OR</p>
                     </>
                   )}
-                  <div className={styles.fileInputContainer}>
-                    <input
-                      type="file"
-                      id={`custom-file-input-${index}`}
-                      onChange={(event) => handleFileChange(event, index)}
-                    />
-                    <label
-                      className={styles.fileInputLabel}
-                      htmlFor={`custom-file-input-${index}`}
-                    >
-                      端末からファイルを選ぶ
-                    </label>
-                  </div>
+                  <InputFile
+                    index={index}
+                    handleFileChange={handleFileChange}
+                  />
                 </div>
               ) : (
                 <Draggable
