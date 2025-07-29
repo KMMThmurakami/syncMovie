@@ -3,7 +3,7 @@ import "./App.css";
 import styles from "./App.module.css";
 import YouTubePlayer from "./components/YouTubePlayer";
 import RemoveVideo from "./components/RemoveVideo";
-import { FaPlay, FaPause } from "react-icons/fa";
+import PlayerButton from "./components/PlayerButton";
 import { IoMoveSharp } from "react-icons/io5";
 import { RiBringToFront } from "react-icons/ri";
 import { Resizable } from "re-resizable";
@@ -174,18 +174,11 @@ function App() {
     <div className="App">
       <h1>Video Sync Viewer</h1>
       <div className={`${styles.inputContainer}`}>
-        {playing && (
-          <button className={styles.playAllButton} onClick={handlePauseAll}>
-            <FaPause />
-            すべて停止 / ALL PAUSE
-          </button>
-        )}
-        {!playing && (
-          <button className={styles.playAllButton} onClick={handlePlayAll}>
-            <FaPlay />
-            すべて再生 / ALL PLAY
-          </button>
-        )}
+        <PlayerButton
+          playing={playing}
+          handlePauseAll={handlePauseAll}
+          handlePlayAll={handlePlayAll}
+        />
         <input
           name="seek"
           type="number"

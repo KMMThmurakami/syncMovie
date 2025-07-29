@@ -1,3 +1,4 @@
+/* App.tsx */
 /* input関連 */
 .inputContainer {
     display: flex;
@@ -33,14 +34,6 @@
 .urlTextInput {
     width: 400px;
     padding: 8px;
-}
-
-.playAllButton {
-    display: flex;
-    justify-content: start;
-    align-items: center;
-    gap: 8px;
-    width: 240px;
 }
 
 /* 動画プレーヤー */
@@ -153,4 +146,13 @@
 
 .fileInputContainer .fileInputLabel:hover {
     opacity: 0.7;
+}
+
+/* PlayerButton.tsx */
+.playAllButton {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 8px;
+    width: 240px;
 }
