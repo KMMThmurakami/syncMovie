@@ -201,7 +201,7 @@ function App() {
               }
             >
               {url === "" || url === null ? (
-                <>
+                <div>
                   {/* YouTube動画の複数同時再生は規約違反になるため1つしか選択させない */}
                   {index === 0 && (
                     <>
@@ -218,7 +218,7 @@ function App() {
                     index={index}
                     handleFileChange={handleFileChange}
                   />
-                </>
+                </div>
               ) : (
                 <Draggable
                   nodeRef={nodeRef}
