@@ -11,28 +11,30 @@ import { Resizable } from "re-resizable";
 import Draggable, { type DraggableData } from "react-draggable";
 import ReactPlayer from "react-player";
 
+export interface VideoState {
+  width: string;
+  height: string;
+  x: number;
+  y: number;
+  src: string;
+  front: boolean;
+}
+
+const initialVideos: VideoState[] = [
+  { width: "560px", height: "315px", x: 0, y: 0, src: "", front: false },
+  { width: "560px", height: "315px", x: 0, y: 0, src: "", front: false },
+];
+
 function App() {
   // 全ての動画の再生状態を管理するstate
   const [playing, setPlaying] = useState(false);
   // 入力中のURLを管理するstate
   const [inputValues, setInputValues] = useState<string[]>(["", ""]);
-  // 表示する動画のリストを管理するstate
-  const [videoUrls, setVideoUrls] = useState<string[]>(["", ""]);
-  // 動画ウィンドウサイズ
-  const [windowSize, setWindowSize] = useState([
-    { width: "560px", height: "315px" },
-    { width: "560px", height: "315px" },
-  ]);
-  // ドラッグ関連
-  const [position, setPosition] = useState([
-    { x: 0, y: 0 },
-    { x: 0, y: 0 },
-  ]);
+  // 動画パラメータ
+  const [videoParam, setVideoParam] = useState<VideoState[]>(initialVideos);
+
   // シーク関連
   const [seek, setSeek] = useState(0);
-  // 最前面に表示
-  const [front, setFront] = useState<boolean[]>([true, false]);
-
   // シーク関連のRef
   const playerRefs = useRef<(HTMLVideoElement | null)[]>([]);
   // ドラッグ関連のRef
@@ -54,8 +56,19 @@ function App() {
 
   // 読み込み動画リスト更新
   const updateVideoUrl = (index: number, newUrl: string) => {
-    setVideoUrls((currentIds) =>
-      currentIds.map((url, i) => (i === index ? newUrl : url))
+    setVideoParam((currentValues) =>
+      currentValues.map((val, i) =>
+        i === index
+          ? {
+              width: val.width,
+              height: val.height,
+              x: val.x,
+              y: val.y,
+              src: newUrl,
+              front: val.front,
+            }
+          : val
+      )
     );
   };
 
@@ -100,7 +113,7 @@ function App() {
     const file = event.target.files[0];
     if (file) {
       // もし同じスロットに既にローカル動画があれば、古いURLを解放する
-      const oldUrl = videoUrls[index];
+      const oldUrl = videoParam[index].src;
       if (oldUrl && !oldUrl.includes("youtube.com")) {
         URL.revokeObjectURL(oldUrl);
       }
@@ -112,15 +125,21 @@ function App() {
 
   // インデックスを指定して動画を削除する関数
   const handleRemoveVideo = (indexToRemove: number) => {
-    if (!videoUrls[indexToRemove].includes("www.youtube.com")) {
-      URL.revokeObjectURL(videoUrls[indexToRemove]);
+    if (!videoParam[indexToRemove].src.includes("www.youtube.com")) {
+      URL.revokeObjectURL(videoParam[indexToRemove].src);
     }
-    setVideoUrls((currentIds) =>
-      currentIds.map((url, i) => (i === indexToRemove ? "" : url))
-    );
-    setPosition((currentValues) =>
+    setVideoParam((currentValues) =>
       currentValues.map((val, i) =>
-        i === indexToRemove ? { x: 0, y: 0 } : val
+        i === indexToRemove
+          ? {
+              width: "560px",
+              height: "315px",
+              x: 0,
+              y: 0,
+              src: "",
+              front: false,
+            }
+          : val
       )
     );
     playerRefs.current.splice(indexToRemove, 1);
@@ -129,18 +148,29 @@ function App() {
 
   // 動画リサイズ
   const handleResizeVideo = (index: number, width: string, height: string) => {
-    setWindowSize((currentValues) =>
-      currentValues.map((val, i) => (i === index ? { width, height } : val))
+    setVideoParam((currentValues) =>
+      currentValues.map((val, i) =>
+        i === index
+          ? {
+              width,
+              height,
+              x: val.x,
+              y: val.y,
+              src: val.src,
+              front: val.front,
+            }
+          : val
+      )
     );
   };
 
   // 動画リサイズ終了
   const handleResizeStop = (index: number, pos: DOMRect) => {
     // 表示位置を調整
-    const newPosition = position[index];
+    const newPosition = videoParam[index];
     if (pos.left < 0) newPosition.x = newPosition.x + pos.left * -1;
     if (pos.top < 0) newPosition.y = newPosition.y + pos.top * -1;
-    setPosition((currentValues) =>
+    setVideoParam((currentValues) =>
       currentValues.map((val, i) => (i === index ? newPosition : val))
     );
   };
@@ -158,16 +188,44 @@ function App() {
 
   // ドラッグ位置更新
   const handleDragStop = (index: number, data: DraggableData) => {
-    const newPosition = { x: data.x, y: data.y };
-    setPosition((currentValues) =>
-      currentValues.map((val, i) => (i === index ? newPosition : val))
+    setVideoParam((currentValues) =>
+      currentValues.map((val, i) =>
+        i === index
+          ? {
+              width: val.width,
+              height: val.height,
+              x: data.x,
+              y: data.y,
+              src: val.src,
+              front: val.front,
+            }
+          : val
+      )
     );
   };
 
   // 最前面に表示
   const toggleFrontClass = (index: number) => {
-    setFront((currentValues) =>
-      currentValues.map((_, i) => (i === index ? true : false))
+    setVideoParam((currentValues) =>
+      currentValues.map((val, i) =>
+        i === index
+          ? {
+              width: val.width,
+              height: val.height,
+              x: val.x,
+              y: val.y,
+              src: val.src,
+              front: true,
+            }
+          : {
+              width: val.width,
+              height: val.height,
+              x: val.x,
+              y: val.y,
+              src: val.src,
+              front: false,
+            }
+      )
     );
   };
 
@@ -184,7 +242,7 @@ function App() {
       </div>
 
       <ul className={styles.playerContainer}>
-        {videoUrls.map((url, index) => {
+        {videoParam.map((video, index) => {
           if (!nodeRefs.current[index]) {
             nodeRefs.current[index] =
               createRef() as React.RefObject<HTMLDivElement>;
@@ -195,12 +253,12 @@ function App() {
             <li
               key={`video_${index}`}
               className={
-                url === "" || url === null
+                video.src === "" || video.src === null
                   ? styles.playerNoLoad
                   : styles.playerItemWrap
               }
             >
-              {url === "" || url === null ? (
+              {video.src === "" || video.src === null ? (
                 <div>
                   {/* YouTube動画の複数同時再生は規約違反になるため1つしか選択させない */}
                   {index === 0 && (
@@ -224,13 +282,13 @@ function App() {
                   nodeRef={nodeRef}
                   handle=".drag-handle"
                   bounds="body"
-                  position={position[index]}
+                  position={videoParam[index]}
                   onStop={(_e, data) => handleDragStop(index, data)}
                 >
                   <div
                     ref={nodeRef}
                     className={
-                      front[index]
+                      videoParam[index].front
                         ? `${styles.playerItem} ${styles.front}`
                         : `${styles.playerItem}`
                     }
@@ -261,10 +319,10 @@ function App() {
                       }}
                     >
                       <YouTubePlayer
-                        src={url}
+                        src={video.src}
                         playing={playing}
-                        width={windowSize[index].width}
-                        height={windowSize[index].height}
+                        width={videoParam[index].width}
+                        height={videoParam[index].height}
                         ref={(el) => (playerRefs.current[index] = el)}
                       />
                     </Resizable>
