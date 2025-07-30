@@ -6,14 +6,12 @@ import { RiBringToFront } from "react-icons/ri";
 
 interface VideoSubMenuProps {
   index: number;
-  toggleFrontClass: (index: number) => void;
   onRemoveVideo: (index: number) => void;
   handleResizeVideo: (index: number, width: string, height: string) => void;
 }
 
 const VideoSubMenu: React.FC<VideoSubMenuProps> = ({
   index,
-  toggleFrontClass,
   onRemoveVideo,
   handleResizeVideo,
 }) => {
@@ -31,10 +29,7 @@ const VideoSubMenu: React.FC<VideoSubMenuProps> = ({
 
       {/* 前面へボタン */}
       <div className={styles.tooltipContainer}>
-        <div
-          className={styles.videoSubMenuButton}
-          onClick={() => toggleFrontClass(index)}
-        >
+        <div className={styles.videoSubMenuButton}>
           <RiBringToFront />
         </div>
         <span className={styles.tooltipText}>最前面へ</span>
