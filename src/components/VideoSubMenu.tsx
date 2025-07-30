@@ -1,3 +1,4 @@
+import React from "react";
 import styles from "../App.module.css";
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import { IoMoveSharp } from "react-icons/io5";
@@ -56,4 +57,4 @@ const VideoSubMenu: React.FC<VideoSubMenuProps> = ({
   );
 };
 
-export default VideoSubMenu;
+export default React.memo(VideoSubMenu);

@@ -1,3 +1,4 @@
+import React from "react";
 import styles from "../App.module.css";
 
 interface InputYouTubeProps {
@@ -29,4 +30,4 @@ const InputFile: React.FC<InputYouTubeProps> = ({
   );
 };
 
-export default InputFile;
+export default React.memo(InputFile);

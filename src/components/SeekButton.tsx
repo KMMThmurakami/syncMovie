@@ -1,3 +1,4 @@
+import React from "react";
 import styles from "../App.module.css";
 
 interface SeekButtonProps {
@@ -24,4 +25,4 @@ const SeekButton: React.FC<SeekButtonProps> = ({ setSeek, handleJumpSeek }) => {
   );
 };
 
-export default SeekButton;
+export default React.memo(SeekButton);

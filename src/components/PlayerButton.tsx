@@ -1,3 +1,4 @@
+import React from "react";
 import styles from "../App.module.css";
 import { FaPlay, FaPause } from "react-icons/fa";
 
@@ -30,4 +31,4 @@ const PlayerButton: React.FC<PlayerButtonProps> = ({
   );
 };
 
-export default PlayerButton;
+export default React.memo(PlayerButton);

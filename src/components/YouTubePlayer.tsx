@@ -1,3 +1,4 @@
+import React from "react";
 import { forwardRef } from "react";
 import ReactPlayer from "react-player";
 
@@ -29,4 +30,4 @@ const YouTubePlayer = forwardRef<ReactPlayer, YouTubePlayerProps>(
 
 YouTubePlayer.displayName = "YouTubePlayer";
 
-export default YouTubePlayer;
+export default React.memo(YouTubePlayer);

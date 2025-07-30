@@ -1,4 +1,4 @@
-import { useState, useRef, createRef } from "react";
+import { useState, useRef, createRef, useCallback } from "react";
 import "./App.css";
 import styles from "./App.module.css";
 import YouTubePlayer from "./components/YouTubePlayer";
@@ -12,6 +12,7 @@ import Draggable, { type DraggableData } from "react-draggable";
 import ReactPlayer from "react-player";
 
 export interface VideoState {
+  index: number;
   width: string;
   height: string;
   x: number;
@@ -20,10 +21,19 @@ export interface VideoState {
   front: boolean;
 }
 
-const initialVideos: VideoState[] = [
-  { width: "560px", height: "315px", x: 0, y: 0, src: "", front: false },
-  { width: "560px", height: "315px", x: 0, y: 0, src: "", front: false },
-];
+const baseVideo = {
+  width: "560px",
+  height: "315px",
+  x: 0,
+  y: 0,
+  src: "",
+  front: false,
+};
+
+const initialVideos: VideoState[] = Array.from({ length: 2 }, (_, i) => ({
+  index: i,
+  ...baseVideo,
+}));
 
 function App() {
   // 全ての動画の再生状態を管理するstate
@@ -44,190 +54,156 @@ function App() {
 
   // ----------------------------------------------------------
   // 再生状態の切り替え
-  const handlePlayAll = () => setPlaying(true);
-  const handlePauseAll = () => setPlaying(false);
-
-  // 対応する入力欄の値を更新する関数
-  const handleInputChange = (index: number, value: string) => {
-    setInputValues((currentValues) =>
-      currentValues.map((val, i) => (i === index ? value : val))
-    );
-  };
-
-  // 読み込み動画リスト更新
-  const updateVideoUrl = (index: number, newUrl: string) => {
-    setVideoParam((currentValues) =>
-      currentValues.map((val, i) =>
-        i === index
-          ? {
-              width: val.width,
-              height: val.height,
-              x: val.x,
-              y: val.y,
-              src: newUrl,
-              front: val.front,
-            }
-          : val
-      )
-    );
-  };
-
-  // 動画を追加する関数
-  const handleAddVideo = (index: number, url: string) => {
-    // URLが空なら何もしない
-    if (!url) return;
-
-    try {
-      const urlObject = new URL(url);
-      const src = urlObject.href;
-      const hostname = urlObject.hostname;
-
-      if (hostname === "www.youtube.com") {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        const isValid = ReactPlayer.canPlay(src);
-
-        if (isValid) {
-          updateVideoUrl(index, src);
-          setInputValues((currentValues) =>
-            currentValues.map((val, i) => (i === index ? "" : val))
-          );
-        } else {
-          alert("存在しない、または非公開のYouTube動画IDです。");
-        }
-      } else {
-        alert("有効なYouTubeのURLではありません。");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("URLの形式が正しくありません。");
-    }
-  };
-
-  // ファイルが選択されたときに呼ばれる関数
-  const handleFileChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => {
-    if (!event.target.files) return;
-    const file = event.target.files[0];
-    if (file) {
-      // もし同じスロットに既にローカル動画があれば、古いURLを解放する
-      const oldUrl = videoParam[index].src;
-      if (oldUrl && !oldUrl.includes("youtube.com")) {
-        URL.revokeObjectURL(oldUrl);
-      }
-      // 新しいURLを生成してstateにセット
-      const src = URL.createObjectURL(file);
-      updateVideoUrl(index, src);
-    }
-  };
-
-  // インデックスを指定して動画を削除する関数
-  const handleRemoveVideo = (indexToRemove: number) => {
-    if (!videoParam[indexToRemove].src.includes("www.youtube.com")) {
-      URL.revokeObjectURL(videoParam[indexToRemove].src);
-    }
-    setVideoParam((currentValues) =>
-      currentValues.map((val, i) =>
-        i === indexToRemove
-          ? {
-              width: "560px",
-              height: "315px",
-              x: 0,
-              y: 0,
-              src: "",
-              front: false,
-            }
-          : val
-      )
-    );
-    playerRefs.current.splice(indexToRemove, 1);
-    delete nodeRefs.current[indexToRemove];
-  };
-
-  // 動画リサイズ
-  const handleResizeVideo = (index: number, width: string, height: string) => {
-    setVideoParam((currentValues) =>
-      currentValues.map((val, i) =>
-        i === index
-          ? {
-              width,
-              height,
-              x: val.x,
-              y: val.y,
-              src: val.src,
-              front: val.front,
-            }
-          : val
-      )
-    );
-  };
-
-  // 動画リサイズ終了
-  const handleResizeStop = (index: number, pos: DOMRect) => {
-    // 表示位置を調整
-    const newPosition = videoParam[index];
-    if (pos.left < 0) newPosition.x = newPosition.x + pos.left * -1;
-    if (pos.top < 0) newPosition.y = newPosition.y + pos.top * -1;
-    setVideoParam((currentValues) =>
-      currentValues.map((val, i) => (i === index ? newPosition : val))
-    );
-  };
+  const handlePlayAll = useCallback(() => setPlaying(true), []);
+  const handlePauseAll = useCallback(() => setPlaying(false), []);
 
   // シーク操作
-  const handleJumpSeek = () => {
-    const seekTimeFraction = seek;
+  const handleJumpSeek = useCallback(() => {
     playerRefs.current.forEach((player) => {
       // playerが存在し、動画の長さ(duration)が取得できている場合のみ実行
       if (player && player.duration) {
-        player.currentTime = seekTimeFraction;
+        player.currentTime = seek;
       }
     });
-  };
+  }, [seek]);
+
+  // 対応する入力欄の値を更新する関数
+  const handleInputChange = useCallback((index: number, value: string) => {
+    setInputValues((currentValues) =>
+      currentValues.map((val, i) => (i === index ? value : val))
+    );
+  }, []);
+
+  // 動画パラメータ更新
+  const updateVideoState = useCallback(
+    (index: number, newProps: Partial<VideoState>) => {
+      setVideoParam((currentVideos) =>
+        currentVideos.map((video) =>
+          video.index === index ? { ...video, ...newProps } : video
+        )
+      );
+    },
+    []
+  );
+
+  // 動画を追加する関数
+  const handleAddVideo = useCallback(
+    (index: number, url: string) => {
+      // URLが空なら何もしない
+      if (!url) return;
+
+      try {
+        const urlObject = new URL(url);
+        const src = urlObject.href;
+        const hostname = urlObject.hostname;
+
+        if (hostname === "www.youtube.com") {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
+          const isValid = ReactPlayer.canPlay(src);
+
+          if (isValid) {
+            updateVideoState(index, { src });
+            setInputValues((currentValues) =>
+              currentValues.map((val, i) => (i === index ? "" : val))
+            );
+          } else {
+            alert("存在しない、または非公開のYouTube動画IDです。");
+          }
+        } else {
+          alert("有効なYouTubeのURLではありません。");
+        }
+      } catch (error) {
+        console.error(error);
+        alert("URLの形式が正しくありません。");
+      }
+    },
+    [updateVideoState]
+  );
+
+  // ファイルが選択されたときに呼ばれる関数
+  const handleFileChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      setVideoParam((currentVideos) => {
+        const video = currentVideos.find((v) => v.index === index);
+        if (video && video.src.startsWith("blob:")) {
+          URL.revokeObjectURL(video.src);
+        }
+        return currentVideos.map((video) =>
+          video.index === index
+            ? {
+                ...video,
+                src: URL.createObjectURL(file),
+              }
+            : video
+        );
+      });
+    },
+    []
+  );
+
+  // インデックスを指定して動画を削除する関数
+  const handleRemoveVideo = useCallback((index: number) => {
+    setVideoParam((currentVideos) => {
+      const videoToRemove = currentVideos.find((v) => v.index === index);
+      if (videoToRemove && videoToRemove.src.startsWith("blob:")) {
+        URL.revokeObjectURL(videoToRemove.src);
+      }
+      return currentVideos.map((video) =>
+        video.index === index
+          ? {
+              ...video,
+              ...baseVideo,
+            }
+          : video
+      );
+    });
+    playerRefs.current.splice(index, 1);
+    delete nodeRefs.current[index];
+  }, []);
+
+  // 動画リサイズ
+  const handleResizeVideo = useCallback(
+    (index: number, width: string, height: string) => {
+      updateVideoState(index, { width, height });
+    },
+    [updateVideoState]
+  );
+
+  // 動画リサイズ終了
+  const handleResizeStop = useCallback((index: number, pos: DOMRect) => {
+    setVideoParam((currentVideos) => {
+      return currentVideos.map((video) =>
+        video.index === index
+          ? {
+              ...video,
+              x: pos.left < 0 ? video.x + pos.left * -1 : video.x,
+              y: pos.top < 0 ? video.y + pos.top * -1 : video.y,
+            }
+          : video
+      );
+    });
+  }, []);
 
   // ドラッグ位置更新
-  const handleDragStop = (index: number, data: DraggableData) => {
-    setVideoParam((currentValues) =>
-      currentValues.map((val, i) =>
-        i === index
-          ? {
-              width: val.width,
-              height: val.height,
-              x: data.x,
-              y: data.y,
-              src: val.src,
-              front: val.front,
-            }
-          : val
-      )
-    );
-  };
+  const handleDragStop = useCallback(
+    (index: number, data: DraggableData) => {
+      updateVideoState(index, { x: data.x, y: data.y });
+    },
+    [updateVideoState]
+  );
 
   // 最前面に表示
-  const toggleFrontClass = (index: number) => {
+  const toggleFrontClass = useCallback((index: number) => {
     setVideoParam((currentValues) =>
-      currentValues.map((val, i) =>
-        i === index
-          ? {
-              width: val.width,
-              height: val.height,
-              x: val.x,
-              y: val.y,
-              src: val.src,
-              front: true,
-            }
-          : {
-              width: val.width,
-              height: val.height,
-              x: val.x,
-              y: val.y,
-              src: val.src,
-              front: false,
-            }
-      )
+      currentValues.map((val, i) => ({
+        ...val,
+        front: i === index,
+      }))
     );
-  };
+  }, []);
 
   return (
     <div className="App">
