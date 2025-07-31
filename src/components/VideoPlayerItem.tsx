@@ -10,7 +10,8 @@ import styles from "../App.module.css";
 import type { Direction } from "re-resizable/lib/resizer";
 
 interface Props {
-  video: { index: number; src: string };
+  src: string;
+  index: number;
   playing: boolean;
   isFront: boolean;
   onRemove: (index: number) => void;
@@ -19,7 +20,8 @@ interface Props {
 }
 
 const VideoPlayerItem = ({
-  video,
+  src,
+  index,
   playing,
   isFront,
   onRemove,
@@ -45,8 +47,8 @@ const VideoPlayerItem = ({
   );
 
   const bringToFront = useCallback(() => {
-    onBringToFront(video.index);
-  }, [onBringToFront, video.index]);
+    onBringToFront(index);
+  }, [onBringToFront, index]);
 
   return (
     <Draggable
@@ -63,7 +65,7 @@ const VideoPlayerItem = ({
         onClick={bringToFront}
       >
         <VideoSubMenu
-          index={video.index}
+          index={index}
           onRemoveVideo={onRemove}
           handleResizeVideo={(_index, width, height) =>
             setSize({ width, height })
@@ -76,7 +78,7 @@ const VideoPlayerItem = ({
           maxHeight={window.innerHeight}
         >
           <YouTubePlayer
-            src={video.src}
+            src={src}
             playing={playing}
             width={size.width}
             height={size.height}

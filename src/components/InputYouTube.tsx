@@ -3,14 +3,14 @@ import styles from "../App.module.css";
 
 interface InputYouTubeProps {
   index: number;
-  inputValues: string[];
+  inputValue: string;
   handleInputChange: (index: number, value: string) => void;
   handleAddVideo: (index: number, url: string) => void;
 }
 
 const InputYouTube: React.FC<InputYouTubeProps> = ({
   index,
-  inputValues,
+  inputValue,
   handleInputChange,
   handleAddVideo,
 }) => {
@@ -21,15 +21,13 @@ const InputYouTube: React.FC<InputYouTubeProps> = ({
         className={styles.urlTextInput}
         type="text"
         placeholder="YouTube動画のURLを貼り付け"
-        value={inputValues[index]}
+        value={inputValue}
         onChange={(e) => handleInputChange(index, e.target.value)}
         onKeyDown={(e) =>
-          e.key === "Enter" && handleAddVideo(index, inputValues[index])
+          e.key === "Enter" && handleAddVideo(index, inputValue)
         }
       />
-      <button onClick={() => handleAddVideo(index, inputValues[index])}>
-        追加
-      </button>
+      <button onClick={() => handleAddVideo(index, inputValue)}>追加</button>
     </div>
   );
 };
