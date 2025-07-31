@@ -3,6 +3,7 @@ import { useState, useRef, useCallback } from "react";
 
 export const usePlayerControls = (videoCount: number) => {
   const [playing, setPlaying] = useState(false);
+  const [subMenuVisible, setSubMenuVisible] = useState(true);
   const [seek, setSeek] = useState(0);
   const playerRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
@@ -21,6 +22,10 @@ export const usePlayerControls = (videoCount: number) => {
       }
     });
   }, [seek]);
+
+  const handleToggleSubMenu = useCallback(() => {
+    setSubMenuVisible((prev) => !prev);
+  }, []);
 
   const getPlayerRef = useCallback(
     (index: number) => (el: HTMLVideoElement | null) => {
@@ -43,6 +48,8 @@ export const usePlayerControls = (videoCount: number) => {
     handlePlayAll,
     handlePauseAll,
     handleJumpSeek,
+    subMenuVisible,
+    handleToggleSubMenu,
     getPlayerRef,
     clearPlayerRef,
   };

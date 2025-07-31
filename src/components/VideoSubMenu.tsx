@@ -6,17 +6,25 @@ import { RiBringToFront } from "react-icons/ri";
 
 interface VideoSubMenuProps {
   index: number;
+  subMenuVisible: boolean;
   onRemoveVideo: (index: number) => void;
   handleResizeVideo: (index: number, width: string, height: string) => void;
 }
 
 const VideoSubMenu: React.FC<VideoSubMenuProps> = ({
   index,
+  subMenuVisible,
   onRemoveVideo,
   handleResizeVideo,
 }) => {
   return (
-    <div className={styles.videoSubMenu}>
+    <div
+      className={
+        subMenuVisible
+          ? styles.videoSubMenu
+          : `${styles.videoSubMenu} ${styles.invisible}`
+      }
+    >
       {/* 移動ボタン */}
       <div className={styles.tooltipContainer}>
         <div

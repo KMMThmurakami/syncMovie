@@ -7,6 +7,7 @@ import VideoPlayerItem from "./components/VideoPlayerItem";
 import { useVideos } from "./hooks/useVideos";
 import { usePlayerControls } from "./hooks/usePlayerControls";
 import VideoInputPlaceholder from "./components/VideoInputPlaceholder"; // 分割したコンポーネント
+import SubMenuVisibleButton from "./components/SubMenuVisibleButton";
 
 function App() {
   // 動画状態管理（src）をまとめたhooks
@@ -25,7 +26,9 @@ function App() {
     setSeek,
     handlePlayAll,
     handlePauseAll,
+    subMenuVisible,
     handleJumpSeek,
+    handleToggleSubMenu,
     getPlayerRef,
     clearPlayerRef,
   } = usePlayerControls(videos.length);
@@ -47,6 +50,10 @@ function App() {
           handlePlayAll={handlePlayAll}
         />
         <SeekButton setSeek={setSeek} handleJumpSeek={handleJumpSeek} />
+        <SubMenuVisibleButton
+          subMenuVisible={subMenuVisible}
+          handleToggleSubMenu={handleToggleSubMenu}
+        />
       </div>
 
       <ul className={styles.playerContainer}>
@@ -69,6 +76,7 @@ function App() {
                 index={index}
                 playing={playing}
                 isFront={frontVideoIndex === index}
+                subMenuVisible={subMenuVisible}
                 onRemove={onRemove}
                 onBringToFront={setFrontVideoIndex}
                 playerRef={getPlayerRef(index)}

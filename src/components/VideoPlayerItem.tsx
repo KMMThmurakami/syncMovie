@@ -14,6 +14,7 @@ interface Props {
   index: number;
   playing: boolean;
   isFront: boolean;
+  subMenuVisible: boolean;
   onRemove: (index: number) => void;
   onBringToFront: (index: number) => void;
   playerRef: (el: HTMLVideoElement | null) => void;
@@ -24,6 +25,7 @@ const VideoPlayerItem = ({
   index,
   playing,
   isFront,
+  subMenuVisible,
   onRemove,
   onBringToFront,
   playerRef,
@@ -81,6 +83,7 @@ const VideoPlayerItem = ({
           handleResizeVideo={(_index, width, height) =>
             setSize({ width, height })
           }
+          subMenuVisible={subMenuVisible}
         />
         <Resizable
           size={{ width: size.width, height: size.height }}
