@@ -46,6 +46,17 @@ const VideoPlayerItem = ({
     []
   );
 
+  const handleResizeStop = useCallback(
+    (pos: { x: number; y: number }) => {
+      // 表示位置を調整
+      const newPosition = position;
+      if (pos.x < 50) newPosition.x = newPosition.x + pos.x * -1 + 50;
+      if (pos.y < 0) newPosition.y = newPosition.y + pos.y * -1;
+      setPosition({ x: newPosition.x, y: newPosition.y });
+    },
+    [position]
+  );
+
   const bringToFront = useCallback(() => {
     onBringToFront(index);
   }, [onBringToFront, index]);
@@ -74,6 +85,10 @@ const VideoPlayerItem = ({
         <Resizable
           size={{ width: size.width, height: size.height }}
           onResize={handleResize}
+          onResizeStop={(_e, _d, el) => {
+            const pos = el.getBoundingClientRect();
+            handleResizeStop(pos);
+          }}
           maxWidth={window.innerWidth}
           maxHeight={window.innerHeight}
         >

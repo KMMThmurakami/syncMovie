@@ -51,10 +51,6 @@
     position: relative;
 }
 
-.playerItemWrap:nth-of-type(even) .playerItem {
-    flex-direction: row-reverse;
-}
-
 .playerNoLoad {
     width: 615px;
     height: 315px;
