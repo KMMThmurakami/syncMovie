@@ -2,7 +2,7 @@ import React from "react";
 import { forwardRef } from "react";
 import ReactPlayer from "react-player";
 
-interface YouTubePlayerProps {
+interface VideoPlayerProps {
   src: string;
   playing: boolean;
   width: string;
@@ -11,12 +11,12 @@ interface YouTubePlayerProps {
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-const YouTubePlayer = forwardRef<ReactPlayer, YouTubePlayerProps>(
+const VideoPlayer = forwardRef<ReactPlayer, VideoPlayerProps>(
   ({ src, playing, width, height }, ref) => {
     return (
       <ReactPlayer
         style={{ backgroundColor: "#eeeeee" }}
-        ref={ref} // 受け取ったrefをReactPlayerに渡す
+        ref={ref}
         src={src}
         width={width}
         height={height}
@@ -28,6 +28,6 @@ const YouTubePlayer = forwardRef<ReactPlayer, YouTubePlayerProps>(
   }
 );
 
-YouTubePlayer.displayName = "YouTubePlayer";
+VideoPlayer.displayName = "VideoPlayer";
 
-export default React.memo(YouTubePlayer);
+export default React.memo(VideoPlayer);

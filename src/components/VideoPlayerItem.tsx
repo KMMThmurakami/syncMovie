@@ -4,7 +4,7 @@ import Draggable, {
   type DraggableEvent,
 } from "react-draggable";
 import { Resizable } from "re-resizable";
-import YouTubePlayer from "./YouTubePlayer";
+import VideoPlayer from "./VideoPlayer";
 import VideoSubMenu from "./VideoSubMenu";
 import styles from "../App.module.css";
 import type { Direction } from "re-resizable/lib/resizer";
@@ -95,7 +95,7 @@ const VideoPlayerItem = ({
           maxWidth={window.innerWidth}
           maxHeight={window.innerHeight}
         >
-          <YouTubePlayer
+          <VideoPlayer
             src={src}
             playing={playing}
             width={size.width}
