@@ -33,10 +33,14 @@ const VideoPlayerItem = ({
   const [size, setSize] = useState({ width: "560px", height: "315px" });
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const nodeRef = useRef<HTMLDivElement>(null);
+  const isDragging = useRef(false);
 
   const handleDragStop = useCallback(
     (_e: DraggableEvent, data: DraggableData) => {
       setPosition({ x: data.x, y: data.y });
+      setTimeout(() => {
+        isDragging.current = false;
+      }, 0);
     },
     []
   );
@@ -59,9 +63,22 @@ const VideoPlayerItem = ({
     [position]
   );
 
-  const bringToFront = useCallback(() => {
+  // ドラッグ開始時に常に最前面に表示するための関数
+  const bringToFrontOnDrag = useCallback(() => {
+    isDragging.current = true;
     onBringToFront(index);
   }, [onBringToFront, index]);
+
+  // クリック時に最前面の状態をトグル（反転）するための関数
+  const handleToggleFront = useCallback(() => {
+    if (isDragging.current) return;
+
+    if (isFront) {
+      onBringToFront(-1);
+    } else {
+      onBringToFront(index);
+    }
+  }, [isFront, onBringToFront, index]);
 
   return (
     <Draggable
@@ -70,12 +87,12 @@ const VideoPlayerItem = ({
       bounds="body"
       position={position}
       onStop={handleDragStop}
-      onStart={bringToFront}
+      onStart={bringToFrontOnDrag}
     >
       <div
         ref={nodeRef}
         className={`${styles.playerItem} ${isFront ? styles.front : ""}`}
-        onClick={bringToFront}
+        onClick={handleToggleFront}
       >
         <VideoSubMenu
           index={index}

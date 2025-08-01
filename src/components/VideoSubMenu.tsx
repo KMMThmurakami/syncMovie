@@ -40,7 +40,7 @@ const VideoSubMenu: React.FC<VideoSubMenuProps> = ({
         <div className={styles.videoSubMenuButton}>
           <RiBringToFront />
         </div>
-        <span className={styles.tooltipText}>最前面へ</span>
+        <span className={styles.tooltipText}>前後切り替え</span>
       </div>
 
       {/* 削除ボタン */}
