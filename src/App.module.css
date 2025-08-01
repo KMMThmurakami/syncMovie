@@ -153,6 +153,10 @@
     cursor: move;
 }
 
+.invisible {
+    visibility: hidden;
+}
+
 /* ツールチップ */
 .tooltipContainer {
     position: relative;
@@ -200,6 +204,3 @@
     padding: 8px;
 }
 
-.invisible {
-    visibility: hidden;
-}
