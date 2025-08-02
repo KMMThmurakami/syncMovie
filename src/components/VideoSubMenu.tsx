@@ -9,6 +9,7 @@ interface VideoSubMenuProps {
   subMenuVisible: boolean;
   onRemoveVideo: (index: number) => void;
   handleResizeVideo: (index: number, width: string, height: string) => void;
+  onClickToggleFront: () => void;
 }
 
 const VideoSubMenu: React.FC<VideoSubMenuProps> = ({
@@ -16,6 +17,7 @@ const VideoSubMenu: React.FC<VideoSubMenuProps> = ({
   subMenuVisible,
   onRemoveVideo,
   handleResizeVideo,
+  onClickToggleFront,
 }) => {
   return (
     <div
@@ -36,7 +38,7 @@ const VideoSubMenu: React.FC<VideoSubMenuProps> = ({
       </div>
 
       {/* 前面へボタン */}
-      <div className={styles.tooltipContainer}>
+      <div className={styles.tooltipContainer} onClick={onClickToggleFront}>
         <div className={styles.videoSubMenuButton}>
           <RiBringToFront />
         </div>

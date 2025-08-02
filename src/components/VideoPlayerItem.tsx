@@ -100,7 +100,6 @@ const VideoPlayerItem = ({
       <div
         ref={nodeRef}
         className={`${styles.playerItem} ${isFront ? styles.front : ""}`}
-        onClick={handleToggleFront}
       >
         <VideoSubMenu
           index={index}
@@ -109,6 +108,7 @@ const VideoPlayerItem = ({
             setSize({ width, height })
           }
           subMenuVisible={subMenuVisible}
+          onClickToggleFront={handleToggleFront}
         />
         <Resizable
           size={{ width: size.width, height: size.height }}
