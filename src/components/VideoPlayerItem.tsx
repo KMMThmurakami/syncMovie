@@ -40,7 +40,7 @@ const VideoPlayerItem = ({
     if (index % 2 === 0) {
       newPositionX = -610;
     }
-    return ({ x: newPositionX, y: 240 });
+    return { x: newPositionX, y: 240 };
   }
 
   const handleDragStop = useCallback(
@@ -79,14 +79,8 @@ const VideoPlayerItem = ({
 
   // クリック時に最前面の状態をトグル（反転）するための関数
   const handleToggleFront = useCallback(() => {
-    if (isDragging.current) return;
-
-    if (isFront) {
-      onBringToFront(-1);
-    } else {
-      onBringToFront(index);
-    }
-  }, [isFront, onBringToFront, index]);
+    onBringToFront(index);
+  }, [onBringToFront, index]);
 
   return (
     <Draggable
