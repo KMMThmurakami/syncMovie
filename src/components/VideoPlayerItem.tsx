@@ -31,9 +31,17 @@ const VideoPlayerItem = ({
   playerRef,
 }: Props) => {
   const [size, setSize] = useState({ width: "560px", height: "315px" });
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [position, setPosition] = useState(initPosition);
   const nodeRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
+
+  function initPosition() {
+    let newPositionX = 0;
+    if (index % 2 === 0) {
+      newPositionX = -610;
+    }
+    return ({ x: newPositionX, y: 240 });
+  }
 
   const handleDragStop = useCallback(
     (_e: DraggableEvent, data: DraggableData) => {
