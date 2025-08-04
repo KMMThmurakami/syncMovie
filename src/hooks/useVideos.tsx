@@ -1,5 +1,4 @@
-// hooks/useVideos.ts
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import ReactPlayer from "react-player";
 
 const INITIAL_VIDEO_COUNT = 2;
@@ -12,24 +11,26 @@ export const useVideos = () => {
     Array(INITIAL_VIDEO_COUNT).fill("")
   );
 
-  const updateVideoSrc = useCallback(
-    (index: number, src: string) => {
-      // 既存のBlob URLがあれば破棄
-      const oldSrc = videos[index];
-      if (oldSrc.startsWith("blob:")) {
+  const updateVideoSrc = useCallback((index: number, src: string) => {
+    setVideos((currentVideos) => {
+      const oldSrc = currentVideos[index];
+      // If the old source was a blob URL, revoke it to prevent memory leaks.
+      if (oldSrc && oldSrc.startsWith("blob:")) {
         URL.revokeObjectURL(oldSrc);
       }
 
-      setVideos((current) => current.map((v, i) => (i === index ? src : v)));
+      // Create a new array with the updated source.
+      const newVideos = [...currentVideos];
+      newVideos[index] = src;
+      return newVideos;
+    });
 
-      if (src.startsWith("http")) {
-        setInputValues((current) =>
-          current.map((val, i) => (i === index ? "" : val))
-        );
-      }
-    },
-    [videos]
-  ); // `videos` への依存は古いblob URLの破棄に必要
+    if (src.startsWith("http")) {
+      setInputValues((current) =>
+        current.map((val, i) => (i === index ? "" : val))
+      );
+    }
+  }, []);
 
   const handleAddYouTube = useCallback(
     (index: number, url: string) => {
@@ -66,17 +67,6 @@ export const useVideos = () => {
       current.map((val, i) => (i === index ? value : val))
     );
   }, []);
-
-  // コンポーネントのアンマウント時に全てのBlob URLをクリーンアップ
-  useEffect(() => {
-    return () => {
-      videos.forEach((src) => {
-        if (src.startsWith("blob:")) {
-          URL.revokeObjectURL(src);
-        }
-      });
-    };
-  }, [videos]);
 
   return {
     videos,
