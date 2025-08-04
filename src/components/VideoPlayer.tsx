@@ -1,6 +1,17 @@
 import React from "react";
 import { forwardRef } from "react";
 import ReactPlayer from "react-player";
+import {
+  MediaController,
+  MediaControlBar,
+  MediaTimeRange,
+  MediaTimeDisplay,
+  MediaPlaybackRateButton,
+  MediaPlayButton,
+  MediaSeekBackwardButton,
+  MediaSeekForwardButton,
+  MediaFullscreenButton,
+} from "media-chrome/react";
 
 interface VideoPlayerProps {
   src: string;
@@ -15,16 +26,28 @@ interface VideoPlayerProps {
 const VideoPlayer = forwardRef<ReactPlayer, VideoPlayerProps>(
   ({ src, playing, width, height, volume }, ref) => {
     return (
-      <ReactPlayer
-        style={{ backgroundColor: "#eeeeee" }}
-        ref={ref}
-        src={src}
-        width={width}
-        height={height}
-        playing={playing}
-        controls={false}
-        volume={volume}
-      />
+      <MediaController>
+        <ReactPlayer
+          slot="media"
+          style={{ backgroundColor: "#eeeeee" }}
+          ref={ref}
+          src={src}
+          width={width}
+          height={height}
+          playing={playing}
+          controls={false}
+          volume={volume}
+        />
+        <MediaControlBar>
+          <MediaPlayButton />
+          <MediaSeekBackwardButton seekOffset={10} />
+          <MediaSeekForwardButton seekOffset={10} />
+          <MediaTimeRange />
+          <MediaTimeDisplay showDuration />
+          <MediaPlaybackRateButton />
+          <MediaFullscreenButton />
+        </MediaControlBar>
+      </MediaController>
     );
   }
 );
