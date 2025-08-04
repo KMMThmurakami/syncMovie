@@ -10,7 +10,6 @@ import {
   MediaPlayButton,
   MediaSeekBackwardButton,
   MediaSeekForwardButton,
-  MediaFullscreenButton,
 } from "media-chrome/react";
 
 interface VideoPlayerProps {
@@ -45,7 +44,6 @@ const VideoPlayer = forwardRef<ReactPlayer, VideoPlayerProps>(
           <MediaTimeRange />
           <MediaTimeDisplay showDuration />
           <MediaPlaybackRateButton />
-          <MediaFullscreenButton />
         </MediaControlBar>
       </MediaController>
     );
