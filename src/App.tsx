@@ -37,6 +37,20 @@ function App() {
 
   const [frontVideoIndex, setFrontVideoIndex] = useState<number | null>(null);
 
+  // 前後切り替え
+  const handleToggleFront = (clickedIndex: number) => {
+    // クリックされた動画が既に最前面なら、もう一方を最前面にする
+    if (frontVideoIndex === clickedIndex) {
+      const otherIndex = videos.findIndex(
+        (src, i) => src && i !== clickedIndex
+      );
+      setFrontVideoIndex(otherIndex);
+    } else {
+      // 最前面でなければ、クリックされた動画を最前面にする
+      setFrontVideoIndex(clickedIndex);
+    }
+  };
+
   const onRemove = (index: number) => {
     handleRemoveVideo(index);
     clearPlayerRef(index); // プレイヤーの参照もクリア
@@ -80,7 +94,7 @@ function App() {
                 isFront={frontVideoIndex === index}
                 subMenuVisible={subMenuVisible}
                 onRemove={onRemove}
-                onBringToFront={setFrontVideoIndex}
+                onBringToFront={handleToggleFront}
                 playerRef={getPlayerRef(index)}
                 volume={volumes[index] ?? 0.0}
                 onVolumeChange={handleVolumeChange}

@@ -44,12 +44,12 @@ const VideoSubMenu: React.FC<VideoSubMenuProps> = ({
         <span className={styles.tooltipText}>移動</span>
       </div>
 
-      {/* 前面へボタン */}
+      {/* 前後切り替えボタン */}
       <div className={styles.tooltipContainer} onClick={onClickToggleFront}>
         <div className={styles.videoSubMenuButton}>
           <RiBringToFront />
         </div>
-        <span className={styles.tooltipText}>前面へ</span>
+        <span className={styles.tooltipText}>前後切り替え</span>
       </div>
 
       {/* 削除ボタン */}
