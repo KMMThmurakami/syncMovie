@@ -15,6 +15,8 @@ interface Props {
   playing: boolean;
   isFront: boolean;
   subMenuVisible: boolean;
+  volume: number; // volumeプロパティを追加
+  onVolumeChange: (index: number, volume: number) => void;
   onRemove: (index: number) => void;
   onBringToFront: (index: number) => void;
   playerRef: (el: HTMLVideoElement | null) => void;
@@ -26,6 +28,8 @@ const VideoPlayerItem = ({
   playing,
   isFront,
   subMenuVisible,
+  volume,
+  onVolumeChange,
   onRemove,
   onBringToFront,
   playerRef,
@@ -63,7 +67,7 @@ const VideoPlayerItem = ({
   const handleResizeStop = useCallback(
     (pos: { x: number; y: number }) => {
       // 表示位置を調整
-      const newPosition = position;
+      const newPosition = { ...position };
       if (pos.x < 50) newPosition.x = newPosition.x + pos.x * -1 + 50;
       if (pos.y < 0) newPosition.y = newPosition.y + pos.y * -1;
       setPosition({ x: newPosition.x, y: newPosition.y });
@@ -81,6 +85,10 @@ const VideoPlayerItem = ({
   const handleToggleFront = useCallback(() => {
     onBringToFront(index);
   }, [onBringToFront, index]);
+
+  const handleLocalVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onVolumeChange(index, parseFloat(e.target.value));
+  };
 
   return (
     <Draggable
@@ -103,6 +111,8 @@ const VideoPlayerItem = ({
           }
           subMenuVisible={subMenuVisible}
           onClickToggleFront={handleToggleFront}
+          volume={volume}
+          handleLocalVolumeChange={handleLocalVolumeChange}
         />
         <Resizable
           size={{ width: size.width, height: size.height }}
@@ -120,6 +130,7 @@ const VideoPlayerItem = ({
             width={size.width}
             height={size.height}
             ref={playerRef}
+            volume={volume} // volumeを渡す
           />
         </Resizable>
       </div>

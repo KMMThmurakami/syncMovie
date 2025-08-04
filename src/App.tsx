@@ -23,6 +23,8 @@ function App() {
   // プレイヤー制御（再生、シーク、ref）をまとめたhooks
   const {
     playing,
+    volumes,
+    handleVolumeChange,
     setSeek,
     handlePlayAll,
     handlePauseAll,
@@ -80,6 +82,8 @@ function App() {
                 onRemove={onRemove}
                 onBringToFront={setFrontVideoIndex}
                 playerRef={getPlayerRef(index)}
+                volume={volumes[index] ?? 0.0}
+                onVolumeChange={handleVolumeChange}
               />
             )}
           </li>

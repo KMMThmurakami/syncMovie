@@ -7,12 +7,13 @@ interface VideoPlayerProps {
   playing: boolean;
   width: string;
   height: string;
+  volume: number;
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 const VideoPlayer = forwardRef<ReactPlayer, VideoPlayerProps>(
-  ({ src, playing, width, height }, ref) => {
+  ({ src, playing, width, height, volume }, ref) => {
     return (
       <ReactPlayer
         style={{ backgroundColor: "#eeeeee" }}
@@ -21,8 +22,8 @@ const VideoPlayer = forwardRef<ReactPlayer, VideoPlayerProps>(
         width={width}
         height={height}
         playing={playing}
-        controls={true}
-        muted={true}
+        controls={false}
+        volume={volume}
       />
     );
   }
