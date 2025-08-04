@@ -175,6 +175,20 @@
     cursor: move;
 }
 
+.volumeSlider {
+    padding: 4px 8px;
+    background-color: rgba(0,0,0,0.1);
+    height: 157px;
+}
+
+.volumeInput {
+    appearance: slider-vertical;
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+    height: 80%;
+    width:8px;
+}
+
 .invisible {
     visibility: hidden;
 }

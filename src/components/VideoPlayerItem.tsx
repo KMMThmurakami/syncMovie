@@ -38,6 +38,7 @@ const VideoPlayerItem = ({
   const [position, setPosition] = useState(initPosition);
   const nodeRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
+  const lastVolume = useRef(volume > 0 ? volume : 0.5);
 
   function initPosition() {
     let newPositionX = 0;
@@ -90,6 +91,15 @@ const VideoPlayerItem = ({
     onVolumeChange(index, parseFloat(e.target.value));
   };
 
+  if (volume > 0) {
+    lastVolume.current = volume;
+  }
+
+  const handleMuteToggle = () => {
+    const newVolume = volume > 0 ? 0 : lastVolume.current;
+    onVolumeChange(index, newVolume);
+  };
+
   return (
     <Draggable
       nodeRef={nodeRef}
@@ -113,6 +123,7 @@ const VideoPlayerItem = ({
           onClickToggleFront={handleToggleFront}
           volume={volume}
           handleLocalVolumeChange={handleLocalVolumeChange}
+          handleMuteToggle={handleMuteToggle}
         />
         <Resizable
           size={{ width: size.width, height: size.height }}
@@ -130,7 +141,7 @@ const VideoPlayerItem = ({
             width={size.width}
             height={size.height}
             ref={playerRef}
-            volume={volume} // volumeを渡す
+            volume={volume}
           />
         </Resizable>
       </div>

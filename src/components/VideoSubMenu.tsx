@@ -13,6 +13,7 @@ interface VideoSubMenuProps {
   onClickToggleFront: () => void;
   volume: number;
   handleLocalVolumeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleMuteToggle: () => void;
 }
 
 const VideoSubMenu: React.FC<VideoSubMenuProps> = ({
@@ -23,6 +24,7 @@ const VideoSubMenu: React.FC<VideoSubMenuProps> = ({
   onClickToggleFront,
   volume,
   handleLocalVolumeChange,
+  handleMuteToggle,
 }) => {
   return (
     <div
@@ -65,29 +67,18 @@ const VideoSubMenu: React.FC<VideoSubMenuProps> = ({
       </div>
 
       {/* 音量スライダー */}
-      <div
-        style={{
-          padding: "5px 10px",
-          backgroundColor: "rgba(0,0,0,0.1)",
-          height: "155px",
-        }}
-      >
-        {volume === 0.0 ? <FaVolumeMute /> : <FaVolumeUp />}
+      <div className={styles.volumeSlider}>
+        <span onClick={handleMuteToggle}>
+          {volume === 0.0 ? <FaVolumeMute /> : <FaVolumeUp />}
+        </span>
         <input
           type="range"
           min="0"
           max="1"
-          step="0.05"
+          step="0.01"
           value={volume}
           onChange={handleLocalVolumeChange}
-          style={{
-            // スライダーを縦向きにする
-            WebkitAppearance: "slider-vertical" /* WebKit */,
-            writingMode: "vertical-lr",
-            transform: "rotate(180deg)",
-            height: "80%",
-            width: "10px",
-          }}
+          className={styles.volumeInput}
         />
       </div>
     </div>
