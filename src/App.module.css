@@ -164,9 +164,8 @@
 }
 
 .volumeInput {
-    appearance: slider-vertical;
     writing-mode: vertical-lr;
-    transform: rotate(180deg);
+    direction: rtl;
     height: 80%;
     width: 8px;
 }

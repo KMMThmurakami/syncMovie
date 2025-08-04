@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import "./App.css";
 import styles from "./App.module.css";
 import PlayerButton from "./components/PlayerButton";
@@ -38,28 +38,34 @@ function App() {
   const [frontVideoIndex, setFrontVideoIndex] = useState<number | null>(null);
 
   // 前後切り替え
-  const handleToggleFront = (clickedIndex: number) => {
-    // クリックされた動画が既に最前面なら、もう一方を最前面にする
-    if (frontVideoIndex === clickedIndex) {
-      const otherIndex = videos.findIndex(
-        (src, i) => src && i !== clickedIndex
-      );
-      setFrontVideoIndex(otherIndex);
-    } else {
-      // 最前面でなければ、クリックされた動画を最前面にする
-      setFrontVideoIndex(clickedIndex);
-    }
-  };
+  const handleToggleFront = useCallback(
+    (clickedIndex: number) => {
+      // クリックされた動画が既に最前面なら、もう一方を最前面にする
+      if (frontVideoIndex === clickedIndex) {
+        const otherIndex = videos.findIndex(
+          (src, i) => src && i !== clickedIndex
+        );
+        setFrontVideoIndex(otherIndex);
+      } else {
+        // 最前面でなければ、クリックされた動画を最前面にする
+        setFrontVideoIndex(clickedIndex);
+      }
+    },
+    [frontVideoIndex, videos]
+  );
 
   // ドラッグ時は最前面
-  const handleBringToFrontOnDrag = (index: number) => {
+  const handleBringToFrontOnDrag = useCallback((index: number) => {
     setFrontVideoIndex(index);
-  };
+  }, []);
 
-  const onRemove = (index: number) => {
-    handleRemoveVideo(index);
-    clearPlayerRef(index); // プレイヤーの参照もクリア
-  };
+  const onRemove = useCallback(
+    (index: number) => {
+      handleRemoveVideo(index);
+      clearPlayerRef(index); // プレイヤーの参照もクリア
+    },
+    [clearPlayerRef, handleRemoveVideo]
+  );
 
   return (
     <div className="App">
