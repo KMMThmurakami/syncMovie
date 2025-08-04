@@ -18,7 +18,8 @@ interface Props {
   volume: number; // volumeプロパティを追加
   onVolumeChange: (index: number, volume: number) => void;
   onRemove: (index: number) => void;
-  onBringToFront: (index: number) => void;
+  onBringToFrontOnDrag: (index: number) => void;
+  onToggleFront: (index: number) => void;
   playerRef: (el: HTMLVideoElement | null) => void;
 }
 
@@ -31,7 +32,8 @@ const VideoPlayerItem = ({
   volume,
   onVolumeChange,
   onRemove,
-  onBringToFront,
+  onBringToFrontOnDrag,
+  onToggleFront,
   playerRef,
 }: Props) => {
   const [size, setSize] = useState({ width: "560px", height: "315px" });
@@ -79,13 +81,13 @@ const VideoPlayerItem = ({
   // ドラッグ開始時に常に最前面に表示するための関数
   const bringToFrontOnDrag = useCallback(() => {
     isDragging.current = true;
-    onBringToFront(index);
-  }, [onBringToFront, index]);
+    onBringToFrontOnDrag(index);
+  }, [onBringToFrontOnDrag, index]);
 
   // クリック時に最前面の状態をトグル（反転）するための関数
   const handleToggleFront = useCallback(() => {
-    onBringToFront(index);
-  }, [onBringToFront, index]);
+    onToggleFront(index);
+  }, [onToggleFront, index]);
 
   const handleLocalVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onVolumeChange(index, parseFloat(e.target.value));

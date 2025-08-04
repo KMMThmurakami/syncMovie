@@ -51,6 +51,11 @@ function App() {
     }
   };
 
+  // ドラッグ時は最前面
+  const handleBringToFrontOnDrag = (index: number) => {
+    setFrontVideoIndex(index);
+  };
+
   const onRemove = (index: number) => {
     handleRemoveVideo(index);
     clearPlayerRef(index); // プレイヤーの参照もクリア
@@ -94,7 +99,8 @@ function App() {
                 isFront={frontVideoIndex === index}
                 subMenuVisible={subMenuVisible}
                 onRemove={onRemove}
-                onBringToFront={handleToggleFront}
+                onBringToFrontOnDrag={handleBringToFrontOnDrag}
+                onToggleFront={handleToggleFront}
                 playerRef={getPlayerRef(index)}
                 volume={volumes[index] ?? 0.0}
                 onVolumeChange={handleVolumeChange}
